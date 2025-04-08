@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-lacker: var(--font-luckiest);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,4 +33,23 @@ body {
   .test {
     @apply border-1 border-green-400;
   }
+  .purpleBox{
+    @apply relative h-[96dvh] overflow-x-hidden rounded-3xl bg-purple-400 p-4 w-full
+  }
 }
+
+.outlined-text {
+  -webkit-text-stroke: 2px black;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.bg-purple-radial {
+  background: radial-gradient(
+    circle at center,
+    #d2adf5 0%,     /* центр — фиолетовый потемнее */
+    #9964ce 40%,    /* плавный переход */
+    #803aca 100%    /* края — светло-фиолетовые */
+  );
+}
+
+
