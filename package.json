@@ -14,10 +14,16 @@
   "description": "",
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@rainbow-me/rainbowkit": "^2.2.4",
+    "@tanstack/react-query": "^5.72.1",
+    "axios": "^1.8.4",
+    "ethers": "^6.13.5",
     "gsap": "^3.12.7",
     "next": "^15.2.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "viem": "^2.26.2",
+    "wagmi": "^2.14.16"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.17",
