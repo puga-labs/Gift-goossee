@@ -1,6 +1,7 @@
 import CurveText from "./CurveText"
 import MainButtons from "./MainButtons"
 import Image from "next/image"
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Hero = () => {
   return (
@@ -46,10 +47,10 @@ const EyeLogo = () => {
 const ConnectWallet = () => {
   return (
     <div className="absolute top-4 right-4">
-      <button className="px-6 py-3 text-black font-lacker cursor-pointer bg-orange-300 border rounded-full ">
-        Connect wallet
-      </button>
-    </div>
+      <ConnectButton className="px-6 py-3 text-black font-lacker cursor-pointer bg-orange-300 border rounded-full"/>
+        {/* //  Connect wallet
+      // </button> */}
+     </div>
   )
 }
 

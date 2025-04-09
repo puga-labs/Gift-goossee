@@ -1,7 +1,14 @@
 import { Geist, Geist_Mono, Luckiest_Guy } from "next/font/google"
 import "./globals.css"
+import '@rainbow-me/rainbowkit/styles.css';
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
+import Providers from "@/components/Providers"
+
+export const metadata = {
+  title: "Goossee",
+  description: "Send gift with vibes",
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,11 +20,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
-export const metadata = {
-  title: "Goossee",
-  description: "Send gift with vibes",
-}
-
 const luckiestGuy = Luckiest_Guy({
   weight: "400",
   subsets: ["latin"],
@@ -27,14 +29,18 @@ const luckiestGuy = Luckiest_Guy({
 
 export default function RootLayout({ children }) {
   return (
+    <Providers>
     <html lang="en">
+
       <body
         className={`${geistSans.variable} ${luckiestGuy.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <Header /> */}
-        {children}
-        {/* <Footer /> */}
+          {/* <Header /> */}
+          {children}
+          {/* <Footer /> */}
       </body>
+
     </html>
+    </Providers>
   )
 }
