@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${luckiestGuy.variable} ${geistMono.variable} antialiased`}
       >
-          {/* <Header /> */}
+          <Header />
           {children}
           {/* <Footer /> */}
       </body>
