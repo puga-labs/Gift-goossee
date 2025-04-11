@@ -11,7 +11,7 @@ export default function Providers({ children }) {
   return (
     <WagmiProvider config={rpcConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider >
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>

@@ -17,8 +17,10 @@ export default MainButtons
 const SendButton = () => {
   return (
     <Link href="/send">
+
       <button className="btn-big relative ">
         Drop a Gift
+
       </button>
     </Link>
   )
@@ -27,7 +29,9 @@ const SendButton = () => {
 const ReceiveButton = () => {
   return (
     <Link href="/receive">
+
       <button className="btn-sm">Receive</button>
+
     </Link>
   )
 }

@@ -2,7 +2,7 @@ import { Geist, Geist_Mono, Luckiest_Guy, Inter } from "next/font/google"
 import "./globals.css"
 import "@rainbow-me/rainbowkit/styles.css"
 import Footer from "@/components/Footer"
-import Header from "@/components/header/Header"
+import Header from "@/components/Header"
 import Providers from "@/components/Providers"
 
 export const metadata = {
@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
         >
-          <Header />
+          {/* <Header /> */}
           {children}
           {/* <Footer /> */}
         </body>
