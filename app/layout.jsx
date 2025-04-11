@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono, Luckiest_Guy } from "next/font/google"
 import "./globals.css"
 import '@rainbow-me/rainbowkit/styles.css';
-import Footer from "@/components/Footer"
-import Header from "@/components/Header"
-import Providers from "@/components/Providers"
+import Footer from "../components/Footer"
+import Header from "../components/Header"
+import Providers from "../components/Providers"
 
 export const metadata = {
   title: "Goossee",

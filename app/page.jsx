@@ -1,7 +1,7 @@
 import Hero from "../components/mainpage/Hero"
-import HowMain from "@/components/howitworks/HowMain"
-import GalleryMain from "@/components/gallery/GalleryMain"
-import LastSectionMain from "@/components/lastsectioin/LastSectionMain"
+import HowMain from "../components/howitworks/HowMain"
+import GalleryMain from "../components/gallery/GalleryMain"
+import LastSectionMain from "../components/lastsectioin/LastSectionMain"
 
 export default function Home() {
   return (
