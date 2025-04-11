@@ -8,12 +8,12 @@ const CurveText = () => {
         <defs>
           <path id="curve" d="M 100 500 A 500 500 0 0 1 1100 500" />
         </defs>
-        <text className="fill-white font-bold text-[80px] outlined-text pointer-events-none select-none">
+        <text className="fill-black  text-[80px] outlined-text pointer-events-none select-none">
           <textPath
             href="#curve"
             startOffset="50%"
             textAnchor="middle"
-            className="font-lacker uppercase"
+            className=" "
           >
             Injecting vibes into a boring transfer
           </textPath>

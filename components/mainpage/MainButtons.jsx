@@ -1,5 +1,5 @@
 import Link from "next/link"
-
+import { TiGift } from "react-icons/ti"
 
 const MainButtons = () => {
   return (
@@ -17,24 +17,17 @@ export default MainButtons
 const SendButton = () => {
   return (
     <Link href="/send">
-      <button
-        className="px-20 py-6 rounded-full text-white border-[2px]
-      border-black relative z-[10]
-      text-5xl bg-orange-300 cursor-pointer outlined-text"
-      >
-        Drop a Gift🎉
+      <button className="btn-big relative ">
+        Drop a Gift
       </button>
     </Link>
   )
 }
 
-
 const ReceiveButton = () => {
   return (
     <Link href="/receive">
-      <button className="px-4 py-2 text-black bg-purple-400 border rounded-full relative z-[10] cursor-pointer">
-        Receive
-      </button>
+      <button className="btn-sm">Receive</button>
     </Link>
   )
 }
