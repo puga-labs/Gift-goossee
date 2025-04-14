@@ -32,6 +32,9 @@ body {
     @apply text-black font-inter text-3xl border-1 border-black px-32 py-4 rounded-full bg-orange-300 hover:bg-orange-400 transition-all duration-300
     cursor-pointer shadow-[2px_2px_0_#000] hover:shadow-none
   }
+  .shadow-main {
+    @apply shadow-[2px_2px_0_#000] 
+  }
 }
 
 @layer utilities {
