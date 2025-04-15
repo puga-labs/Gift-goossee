@@ -206,16 +206,6 @@ export function ResultImage({
                     height={500}
                 />
                 
-                {/* Базовое украшение */}
-                {!!imageOptions.DECORATION && (
-                    <img 
-                        src={`/GIFT_IMAGES/DECORATION/${imageOptions.DECORATION}.png`} 
-                        alt="Украшение" 
-                        className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 object-contain z-[3]" 
-                        width={375}
-                        height={375}
-                    />
-                )}
                 
                 {/* Рендерим все декорации */}
                 {decorations.map(decoration => {
@@ -241,7 +231,7 @@ export function ResultImage({
                                     onMouseDown={(e) => handleDecorationMouseDown(e, decoration.id)}
                                 >
                                     <img 
-                                        src={`/GIFT_IMAGES/DECORATION/${decoration.option}.png`}
+                                        src={decoration.url}
                                         alt={`Sticker ${decoration.option}`}
                                         className="w-full h-full object-contain pointer-events-none"
                                     />

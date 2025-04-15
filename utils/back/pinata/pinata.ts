@@ -25,6 +25,7 @@ export async function createGiftImage(options: {
     id: number,
     type: string,
     option: string | number,
+    url: string,
     x: number,
     y: number,
     size: { width: number, height: number },
@@ -72,37 +73,36 @@ export async function createGiftImage(options: {
       console.error('Ошибка при подготовке подарка:', error);
     }
     
-    // 4. Подготавливаем базовое украшение, если есть
-    if (options.decoration !== undefined && options.decoration > 0) {
-      try {
-        console.log('Подготовка базового украшения...');
-        const decorWidth = Math.round(outputWidth * 0.5);
-        const decorHeight = Math.round(outputHeight * 0.5);
-        const decorTop = Math.round(outputHeight * 0.3 - decorHeight / 2);
-        const decorLeft = Math.round(outputWidth * 0.5 - decorWidth / 2);
-        
-        const decorBuffer = await sharp(`public/GIFT_IMAGES/DECORATION/${options.decoration}.png`)
-          .resize(decorWidth, decorHeight, {
-            fit: 'contain',
-            background: { r: 0, g: 0, b: 0, alpha: 0 }
-          })
-          .toBuffer();
-        
-        compositeLayers.push({
-          input: decorBuffer,
-          top: decorTop,
-          left: decorLeft
-        });
-      } catch (error) {
-        console.error('Ошибка при подготовке украшения:', error);
-      }
-    }
     
     // 5. Подготавливаем пользовательские декорации
     if (options.decorations && options.decorations.length > 0) {
       console.log(`Подготовка ${options.decorations.length} пользовательских декораций...`);
       console.log(`[DEBUG] Данные декораций с клиента:`, JSON.stringify(options.decorations));
       
+      const buffersArrayPromises = options.decorations.map(async (decoration) => {
+        try {
+          return axios.get(decoration.url, { responseType: 'arraybuffer' })
+        } catch (error) {
+          console.error(`Ошибка при подготовке декорации ${decoration.id}:`, error);
+          // Продолжаем с другими декорациями
+        }
+      })
+
+      const buffersArray: { id: number, buffer: Buffer|null }[] = []
+      await Promise.all(buffersArrayPromises)
+        .then((buffers) => {
+          console.log(buffers.length)
+          buffers.map((buffer, index) => {
+            buffersArray.push({
+              id: options.decorations[index].id,
+              buffer: Buffer.from(buffer.data , 'binary')
+            })
+          })
+        })
+        .catch((error) => {
+          console.error('Ошибка при получении всех декораций:', error);
+        })
+
       for (const decoration of options.decorations) {
         try {
           // Сначала получаем процентные значения координат из клиента
@@ -144,7 +144,17 @@ export async function createGiftImage(options: {
             console.log(`Стикер поворот: ${rotation}°`);
             
             // Создаем изображение стикера и применяем поворот с защитой от обрезки
-            const stickerImage = sharp(`public/GIFT_IMAGES/DECORATION/${decoration.option}.png`)
+            // const response = await axios.get(decoration.url, { responseType: 'arraybuffer' });
+            // const buffer = Buffer.from(response.data, 'binary');
+
+            const buffer = buffersArray.find((buffer) => buffer.id === decoration.id)?.buffer
+
+            if (!buffer) {
+              console.error(`Декорация ${decoration.id} не найдена в массиве декораций`);
+              continue;
+            }
+            
+            const stickerImage = sharp(buffer)
               .resize(width, height, {
                 fit: 'contain',
                 background: { r: 0, g: 0, b: 0, alpha: 0 }

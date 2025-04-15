@@ -1,6 +1,8 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Image from 'next/image';
+import { getStickers } from '../../../lib/utils/getImages';
+
 
 /**
  * Типы декораций, доступные в системе
@@ -27,9 +29,25 @@ const DEFAULT_SIZES = {
 export function DecorationManager({ decorations, onDecorationsChange, selectedDecoration, onSelectDecoration }) {
   // Текущий активный тип декорации для добавления
   const [activeType, setActiveType] = useState(DECORATION_TYPES.STICKER);
+  const [stickers, setStickers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    async function loadStickers() {
+      setLoading(true);
+      const data = await getStickers();
+      console.log(data);
+      setStickers(data);
+      setLoading(false);
+    }
+    
+    loadStickers();
+  }, []);
+  
+  if (loading) return <div>Загрузка стикеров...</div>;
   
   // Варианты стикеров
-  const stickerOptions = Array.from({ length: 4 }).map((_, index) => index + 1);
+  // const stickerOptions = Array.from({ length: 4 }).map((_, index) => index + 1);
   
 
   /**
@@ -37,11 +55,12 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
    * @param {string} type - Тип декорации
    * @param {number|string} option - Выбранный вариант декорации
    */
-  const addDecoration = (type, option) => {
+    const addDecoration = (type, option,url) => {
     const newDecoration = {
       id: Date.now(), // Уникальный идентификатор
       type,
       option,
+      url,
       x: DEFAULT_SIZES[type].width, // Начальная позиция в центре
       y: DEFAULT_SIZES[type].height, // Начальная позиция в центре
       size: { ...DEFAULT_SIZES[type] },
@@ -89,15 +108,15 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
         
         {/* Отображение опций в зависимости от выбранного типа */}
         <div className="grid grid-cols-3 gap-2.5 mb-4 sm:grid-cols-4">
-          {activeType === DECORATION_TYPES.STICKER && stickerOptions.map(option => (
+          {activeType === DECORATION_TYPES.STICKER && stickers.map(option => (
             <div 
-              key={`sticker-${option}`}
-              onClick={() => addDecoration(DECORATION_TYPES.STICKER, option)}
+              key={`sticker-${option.name}`}
+              onClick={() => addDecoration(DECORATION_TYPES.STICKER, option.name,option.url)}
               className="border border-gray-300 rounded cursor-pointer p-1.5 text-center hover:shadow-md transition-shadow"
             >
               <img 
-                src={`/GIFT_IMAGES/DECORATION/${option}.png`}
-                alt={`Sticker ${option}`}
+                src={option.url}
+                alt={`Sticker ${option.name}`}
                 className="w-full h-12 object-contain"
               />
             </div>
@@ -126,7 +145,7 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
                   <div className="flex items-center">
                     {decoration.type === DECORATION_TYPES.STICKER ? (
                       <img 
-                        src={`/GIFT_IMAGES/DECORATION/${decoration.option}.png`}
+                        src={decoration.url}
                         alt="Sticker"
                         className="w-8 h-8 object-contain mr-2"
                       />
