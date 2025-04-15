@@ -61,7 +61,7 @@ const HowMain = () => {
         </HowItem>
       </div>
       <div className="w-full flex items-center justify-center space-x-[10vw] mt-[40px] pb-[100px]">
-        <HowItem step={4} title="Copy & Send link" >
+        <HowItem step={4} title="Send Invite to your friend" >
           <h1 className="text-lg">Your gift is waiting you!</h1>
         </HowItem>
       </div>
