@@ -24,6 +24,8 @@ export function SendForm({ imageOptions, decorations = [] }) {
     to: '',
     amount: '',
     message: '',
+    animation: 'Default',
+    mintDate: new Date(),
   });
 
   /**
@@ -71,9 +73,9 @@ export function SendForm({ imageOptions, decorations = [] }) {
       const sendData = createSendData(
         receiverAddress,
         giftMessage,
-        1, // commissionLevel
-        1, // animation
-        Math.floor(Date.now() / 1000), // timestamp в секундах
+        txData.animation, // animation
+        new Date().getTime(), // timestamp в секундах
+        txData.mintDate.getTime(), // date
         imageUrl, // imageCloseUrl
         imageUrl  // imageOpenUrl
       );
@@ -93,6 +95,8 @@ export function SendForm({ imageOptions, decorations = [] }) {
         to: '',
         amount: '',
         message: '',
+        animation: 'Default',
+        mintDate: new Date(),
       });
     } catch (error) {
       console.error('Ошибка при отправке:', error);
@@ -103,7 +107,7 @@ export function SendForm({ imageOptions, decorations = [] }) {
   };
 
   return (
-    <div className="text-gray-700 mt-5">
+    <div className="text-gray-700 mt-5 w-full">
       {error && (
         <div className="p-2.5 bg-red-50 text-red-800 rounded mb-4">
           {error}
@@ -120,7 +124,7 @@ export function SendForm({ imageOptions, decorations = [] }) {
         <span className="text-xs text-gray-500 ml-1.5">Message </span>
         <input
           type="text"
-          placeholder="gift message"
+          placeholder="Gift Message"
           value={txData.message}
           onChange={(e) => setTxData({ ...txData, message: e.target.value })}
           className="w-full p-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -129,20 +133,48 @@ export function SendForm({ imageOptions, decorations = [] }) {
       </div>
       
       <div className="w-full mb-2.5 flex justify-start">
-        <span className="text-xs text-gray-500 w-1/4">Amount </span>
-        <span className="text-xs text-gray-500 ml-2.5">Receiver </span>
+        <span className="text-xs text-gray-500 w-1/5">Amount </span>
+        <span className="text-xs text-gray-500 w-2/5">Animation </span>
+        <span className="text-xs text-gray-500 w-2/5">Mint Date </span>
       </div>
-      
+
       <div className="w-full flex mb-2.5">
         <input
           type="text"
           placeholder="0.00"
           value={txData.amount}
           onChange={(e) => setTxData({ ...txData, amount: e.target.value })}
-          className="w-1/4 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="w-1/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
           disabled={isLoading}
         />
+        <select 
+          onChange={(e) => setTxData({ ...txData, animation: e.target.value })}
+          className="w-2/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          <option value="Default">Default</option>
+          <option value="Rare">Rare</option>
+          <option value="Legendary">Legendary</option>
+          <option value="Epic">Epic</option>
+        </select>
         <input
+          type="date"
+          placeholder="0.00"
+          value={new Date(txData.mintDate).toISOString().split('T')[0]}
+          onChange={(e) => {
+            const date = new Date(e.target.value);
+            if(Math.floor(date.getTime()/86400000) >= Math.floor(new Date().getTime()/86400000)) {
+              console.log(date.getTime())
+              console.log(new Date().getTime())
+              setTxData({ ...txData, mintDate: new Date(Math.floor(date.getTime()/86400000)*86400000) })
+            } 
+          }}
+          className="w-2/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          disabled={isLoading}
+        />
+      </div>
+      <span className="text-xs text-gray-500">Receiver </span>
+      <div className="w-full flex mb-2.5 justify-start mt-2.5">
+      <input
           type="text"
           placeholder="0x..."
           value={txData.to}
@@ -150,15 +182,14 @@ export function SendForm({ imageOptions, decorations = [] }) {
           className="w-3/4 p-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
           disabled={isLoading}
         />
-      </div>
-
       <button 
         onClick={handleSend} 
-        className={`w-full p-2.5 ${isLoading ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded shadow-sm ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`btn-sm w-1/4 ml-4 items-center flex justify-center`}
         disabled={isLoading}
       >
-        {isLoading ? 'Отправка...' : 'Send Gift'}
+        {isLoading ? 'Sending...' : 'Send!'}
       </button>
+      </div>
     </div>
   );
 }

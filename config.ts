@@ -1,4 +1,4 @@
-export const SMART_CONTRACT_ADDRESS = "0x138db00ba0db3ab7cf4879a8664de30bffa33b03";
+export const SMART_CONTRACT_ADDRESS = "0x619bb8b3b2cf1139870af56ad23d618dacfb52f1";
 export const MONAD_RPC_URL = 'https://testnet-rpc.monad.xyz';
 export const MONAD_CHAIN_ID = 0x279f;
 

@@ -14,15 +14,29 @@ import  {ethers} from 'ethers';
 export function createSendData(
     receiverAddress: string,
     giftMessage: string,
-    commissionLevel: number,
-    giftAnimation: number,
-    timestamp: number | string,
+    giftAnimation: string,
+    timestamp: number,
+    mintDate: number ,
     imageCloseUrl: string,
     imageOpenUrl: string
 ) {
+    let commissionLevel = 0;
+    switch(giftAnimation) {
+        case 'Rare':
+            commissionLevel = 1;
+            break;
+        case 'Legendary':
+            commissionLevel = 2;
+            break;
+        case 'Epic':
+            commissionLevel = 3;
+            break;
+        default:
+            commissionLevel = 0;
+    }
     // Определяем ABI интерфейс для функции createGift
     const iface = new ethers.Interface([
-        'function createGift(address receiver, string memory message, uint8 commissionLevel, uint8 animation, uint256 timestamp, string memory imageClose, string memory imageOpen) external payable'
+        'function createGift(address receiver, string memory message, uint8 commissionLevel, string memory animation, uint256 timestamp, uint256 mintDate, string memory imageClose, string memory imageOpen) external payable'
     ]);
     
     // Кодируем вызов функции с параметрами
@@ -32,6 +46,7 @@ export function createSendData(
         commissionLevel,
         giftAnimation,
         timestamp,
+        Math.floor(mintDate/1000),
         imageCloseUrl,
         imageOpenUrl
     ]);
