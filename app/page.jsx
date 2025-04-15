@@ -5,6 +5,7 @@ import Marquee from "@/components/mainpage/Marquee"
 import FAQsection from "@/components/FAQsection/FAQsection"
 
 
+
 export default function Home() {
   return (
     <main
