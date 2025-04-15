@@ -1,20 +1,15 @@
 import CurveText from "./CurveText"
 import MainButtons from "./MainButtons"
 import Image from "next/image"
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import HeroBoxesBottom from "./HeroBoxesBottom"
 
 const Hero = () => {
   return (
-    <div className="purpleBox">
-      <div className="flex h-full w-full flex-col items-center justify-center relative">
-        <div className="absolute top-[26%] left-1/2 transform -translate-x-1/2">
-          <CurveText />
-        </div>
-        <GoosseeHero />
-        <MainButtons />
-        <EyeLogo />
-        <ConnectWallet />
-      </div>
+    <div className="w-full min-h-screen bg-purple-200 flex flex-col items-center justify-center relative bg-grid">
+      <GoosseeHero />
+      <MainButtons />
+      <div className="my-12"/>
+      <HeroBoxesBottom />
     </div>
   )
 }
@@ -35,23 +30,6 @@ const GoosseeHero = () => {
   )
 }
 
-const EyeLogo = () => {
-  return (
-    <div className="absolute top-0 left-0">
-      <Image src="/eye.png" alt="Eye Logo" width={100} height={100} priority />
-    </div>
-  )
-}
 
-
-const ConnectWallet = () => {
-  return (
-    <div className="absolute top-4 right-4">
-      <ConnectButton className="px-6 py-3 text-black font-lacker cursor-pointer bg-orange-300 border rounded-full"/>
-        {/* //  Connect wallet
-      // </button> */}
-     </div>
-  )
-}
 
 
