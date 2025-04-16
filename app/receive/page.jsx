@@ -5,6 +5,7 @@ import { rpcConfig } from '../../wagmi';
 import { SMART_CONTRACT_ADDRESS } from '../../config'
 import { getNftList, getNftData } from '../../utils/back/chain/calls'
 import { createClaimData } from '../../utils/back/chain/txs'
+import { updtLb } from '../../utils/back/api/leaderboard'
 
 const Page = () => {
     const { sendTransactionAsync } = useSendTransaction({ rpcConfig })
@@ -61,6 +62,7 @@ const Page = () => {
                     data: mintData,
                 })
                 setMintHash(result)
+                await updtLb(address, 'mint', result)
                 const nftData = await getNftData(selectedNft)
                 setForAnimation(nftData)
 

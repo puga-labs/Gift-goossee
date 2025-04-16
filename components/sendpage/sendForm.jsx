@@ -6,7 +6,8 @@ import { generateGiftImage } from '../../utils/imageGenerator'
 import { rpcConfig } from '../../wagmi'
 import { SMART_CONTRACT_ADDRESS } from '../../config'
 import { ethers } from 'ethers'
-
+import { updtLb } from '../../utils/back/api/leaderboard'
+import { useAccount } from 'wagmi'
 /**
  * Компонент формы отправки подарка
  * @param {Object} props - Свойства компонента
@@ -14,6 +15,7 @@ import { ethers } from 'ethers'
  * @param {Array} props.decorations - Массив пользовательских декораций
  */
 export function SendForm({ imageOptions, decorations = [] }) {
+  const { address } = useAccount();
   const { sendTransactionAsync } = useSendTransaction({ rpcConfig });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -86,6 +88,8 @@ export function SendForm({ imageOptions, decorations = [] }) {
         data: sendData,
         value: ethers.parseEther(giftValue.toString()),
       });
+
+      await updtLb(address, 'sent', tx);
 
       console.log('Транзакция отправлена:', tx);
       setSuccess(`Подарок успешно отправлен! Hash: ${tx}`);
