@@ -14,6 +14,8 @@ const Page = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [mintHash, setMintHash] = useState(null)
     const [isMinting, setIsMinting] = useState(false)
+    const [forAnimation, setForAnimation] = useState(false)
+
 
     useEffect(() => {
         if (address) {
@@ -59,6 +61,18 @@ const Page = () => {
                     data: mintData,
                 })
                 setMintHash(result)
+                const nftData = await getNftData(selectedNft)
+                setForAnimation(nftData)
+
+                new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(true)
+                    }, 10000)
+                }).then(() => {
+                    setForAnimation(false)
+                })
+
+
             } catch (error) {
                 console.error('Error minting NFT:', error)
             } finally {
@@ -69,7 +83,6 @@ const Page = () => {
 
     return (
         <div className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] bg-#000000 font-lacker purpleBox flex flex-col items-center">
-            <h1 className="text-2xl mb-4">Receive Gift Page</h1>
             
             {!address ? (
                 <p>Connect your wallet</p>
@@ -100,9 +113,14 @@ const Page = () => {
                                 <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1">
                                     <p className="text-white text-xs truncate">{nft.name}</p>
                                 </div>
-                                {isClaimed && (
+                                {isClaimed && !forAnimation && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                                         <span className="text-white text-xs">Claimed</span>
+                                    </div>
+                                )}
+                                {forAnimation && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                        <h1 className='text-black text-5xl'>{forAnimation.attributes.find(attr => attr.trait_type === 'Animation').value}</h1>
                                     </div>
                                 )}
                             </div>
@@ -125,7 +143,7 @@ const Page = () => {
                         <div className="mt-2 text-sm text-white">
                             Transaction hash: 
                             <a 
-                                href={`https://sepolia.etherscan.io/tx/${mintHash}`}
+                                href={`https://testnet.monadexplorer.com/tx/${mintHash}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ml-1 text-blue-400 hover:underline"
