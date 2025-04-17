@@ -1,16 +1,28 @@
 "use client"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import LeaderboardFake from "./leaderboardFake"
 import { FaCrown } from "react-icons/fa"
+import { getLeaderboard } from "../../lib/utils/leaderboard"
+
 
 const LeaderboardMain = () => {
   const [leaderboard, setLeaderboard] = useState("sender")
+  const [leaderboardData, setLeaderboardData] = useState(LeaderboardFake)
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      const data = await getLeaderboard()
+      console.log(data)
+      setLeaderboardData(data)
+    }
+    fetchLeaderboard()
+  }, [])
 
   // Сортировка данных по убыванию в зависимости от выбранного режима
-  const sortedLeaderboard = [...LeaderboardFake].sort((a, b) =>
+  const sortedLeaderboard = [...leaderboardData].sort((a, b) =>
     leaderboard === "sender"
-      ? b.sendGift - a.sendGift
-      : b.receiveGift - a.receiveGift
+      ? b.sent - a.sent
+      : b.mint - a.mint
   )
 
   return (
@@ -65,12 +77,12 @@ const LeaderboardMain = () => {
                   >
                     <p className="w-1/12 text-center">{index + 1}</p>
                     <p className="w-10/12 text-center">
-                      {item.address.slice(0, 6)}...{item.address.slice(-4)}
+                      {item.id.slice(0, 6)}...{item.id.slice(-4)}
                     </p>
                     <p className="w-1/12 flex justify-center items-center">
                       {leaderboard === "sender"
-                        ? item.sendGift
-                        : item.receiveGift}
+                        ? item.sent
+                        : item.mint}
                     </p>
                   </div>
                 ))}
