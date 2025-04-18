@@ -24,11 +24,6 @@ const Page = () => {
         setMounted(true);
       }, []);
 
-      if (!mounted) {
-        return <div className="min-h-screen flex items-center justify-center">
-          <p>Загрузка...</p>
-        </div>;
-      }
 
     useEffect(() => {
         if (address) {
@@ -94,6 +89,12 @@ const Page = () => {
             }
         }
     }
+
+    if (!mounted) {
+        return <div className="min-h-screen flex items-center justify-center">
+          <p>Загрузка...</p>
+        </div>;
+      }
 
     return (
         <div className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] bg-#000000 font-lacker purpleBox flex flex-col items-center">
