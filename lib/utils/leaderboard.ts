@@ -7,7 +7,6 @@ export async function getLeaderboard(type = 'sent' as actionType) {
     .from('leaderboard')
     .select()
     .order(type, { ascending: false })
-    .limit(15);
   if (error) {
     console.error('Ошибка загрузки лидеров:', error);
     return [];
