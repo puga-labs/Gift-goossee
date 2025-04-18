@@ -16,7 +16,8 @@ export function ResultImage({
   decorations = [], 
   onDecorationsChange,
   selectedDecoration = null,
-  onSelectDecoration = () => {}
+  onSelectDecoration = () => {},
+  message
 }) {
     const imageWrapperRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -205,8 +206,11 @@ export function ResultImage({
                     width={300}
                     height={300}
                 />
-                
-                
+                {!!message && (
+                  <div className='absolute left-1/2 bottom-5 -translate-x-1/2 w-4/5 z-[10] text-center p-2 rounded'>
+                    <p className='font-bold text-white break-words whitespace-pre-wrap'>{message}</p>
+                  </div>
+                )}                
                 {/* Рендерим все декорации */}
                 {decorations.map(decoration => {
                     const isSelected = selectedDecoration === decoration.id;
