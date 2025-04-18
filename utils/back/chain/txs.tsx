@@ -1,5 +1,5 @@
 import  {ethers} from 'ethers';
-
+import {generateTokenId} from './calls'
 /**
  * Создает данные для вызова функции createGift смарт-контракта
  * @param {string} receiverAddress - Адрес получателя подарка
@@ -16,9 +16,7 @@ export function createSendData(
     giftMessage: string,
     giftAnimation: string,
     timestamp: number,
-    mintDate: number ,
-    imageCloseUrl: string,
-    imageOpenUrl: string
+    mintDate: number 
 ) {
     let commissionLevel = 0;
     switch(giftAnimation) {
@@ -36,7 +34,7 @@ export function createSendData(
     }
     // Определяем ABI интерфейс для функции createGift
     const iface = new ethers.Interface([
-        'function createGift(address receiver, string memory message, uint8 commissionLevel, string memory animation, uint256 timestamp, uint256 mintDate, string memory imageClose, string memory imageOpen) external payable'
+        'function createGift(address receiver, string memory message, uint8 commissionLevel, string memory animation, uint256 timestamp, uint256 mintDate) external payable'
     ]);
     
     // Кодируем вызов функции с параметрами
@@ -46,12 +44,13 @@ export function createSendData(
         commissionLevel,
         giftAnimation,
         timestamp,
-        Math.floor(mintDate/1000),
-        imageCloseUrl,
-        imageOpenUrl
+        Math.floor(mintDate/1000)
     ]);
     
-    return data;
+    return {
+        data:data,
+        tokenId: generateTokenId(receiverAddress, timestamp)
+    };
 }
 
 /**
@@ -69,5 +68,6 @@ export function createClaimData(tokenId: number | string) {
     // Кодируем вызов функции с параметром
     const data = iface.encodeFunctionData('claimGift', [tokenId]);
     
-    return data;
+    return data
+      
 }

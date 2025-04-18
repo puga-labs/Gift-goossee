@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
 import { MONAD_RPC_URL, SMART_CONTRACT_ADDRESS } from '../../../config'
+import { encodePacked, keccak256 } from "viem"
 const iface = new ethers.Interface(["function tokenURI(uint256 tokenId) public view override returns (string memory)","function getUserNFTs(address user) external view returns (uint256[] memory)"])
 
 /**
@@ -130,4 +131,12 @@ export async function getNftData (tokenId:string) {
         console.error('Error in getNftToken:', error)
         return null
     }
+}
+
+export function generateTokenId(receiver:string, timestamp:number){
+    const packed = encodePacked(
+        ['uint256', 'uint256'],
+        [BigInt(receiver), BigInt(timestamp)]
+      );
+      return String(BigInt(keccak256(packed)) % (BigInt(10) ** BigInt(8)));
 }

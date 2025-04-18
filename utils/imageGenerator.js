@@ -4,7 +4,7 @@
  * @param {Array} decorations - Массив декораций
  * @returns {Promise<string>} - URL сгенерированного изображения
  */
-export async function generateGiftImage(imageOptions, decorations = []) {
+export async function generateGiftImage(imageOptions, decorations = [], image_id) {
   try {
     console.log('Запрос на генерацию изображения:', { imageOptions, decorationCount: decorations.length });
     console.log(decorations)
@@ -17,6 +17,7 @@ export async function generateGiftImage(imageOptions, decorations = []) {
       body: JSON.stringify({
         imageOptions,
         decorations,
+        image_id
       }),
     });
 
@@ -26,9 +27,7 @@ export async function generateGiftImage(imageOptions, decorations = []) {
       throw new Error(error.error || 'Ошибка при генерации изображения');
     }
 
-    const data = await response.json();
-    console.log('Получен URL изображения:', data.url);
-    return data.url;
+    return true;
   } catch (error) {
     console.error('Ошибка при запросе к API генерации изображения:', error);
     throw error;
