@@ -17,6 +17,18 @@ const Page = () => {
     const [isMinting, setIsMinting] = useState(false)
     const [forAnimation, setForAnimation] = useState(false)
 
+    // solve ssr error
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+      }, []);
+
+      if (!mounted) {
+        return <div className="min-h-screen flex items-center justify-center">
+          <p>Загрузка...</p>
+        </div>;
+      }
 
     useEffect(() => {
         if (address) {
