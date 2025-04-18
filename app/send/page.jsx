@@ -12,8 +12,15 @@ const Page = () => {
     const [imageOptions, setImageOptions] = useState({
         BACKGROUND: 0,
         GIFT: 0,
-        DECORATION: 0,
     });
+
+    const [txData, setTxData] = useState({
+        to: '',
+        amount: '',
+        message: '',
+        animation: 'Default',
+        mintDate: new Date(),
+      });
 
     // Массив добавленных декораций
     const [decorations, setDecorations] = useState([]);
@@ -32,6 +39,7 @@ const Page = () => {
                     onDecorationsChange={setDecorations}
                     selectedDecoration={selectedDecoration}
                     onSelectDecoration={setSelectedDecoration}
+
                 />
             </div>
 
@@ -43,12 +51,15 @@ const Page = () => {
                     onDecorationsChange={setDecorations}
                     selectedDecoration={selectedDecoration}
                     onSelectDecoration={setSelectedDecoration}
+                    message={txData.message}
                 />
                 
                 {/* Форма отправки подарка */}
                 <SendForm 
                     imageOptions={imageOptions}
                     decorations={decorations}
+                    txData={txData}
+                    setTxData={setTxData}
                 />
             </div>
             </div>
