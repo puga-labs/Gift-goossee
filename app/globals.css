@@ -8,48 +8,49 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --font-lacker: var(--font-luckiest);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-inter: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: bold;
+  font-color: black;
 }
 
 @layer {
   .test {
     @apply border-1 border-green-400;
   }
-  .purpleBox{
-    @apply relative h-[96dvh] overflow-x-hidden rounded-3xl bg-purple-400 p-4 w-full
+  .btn-sm {
+    @apply text-black font-inter text-xs border-1 border-black px-16 py-2 rounded-xl bg-orange-300 hover:bg-orange-400 transition-all duration-300
+    cursor-pointer shadow-[2px_2px_0_#000] hover:shadow-none
+  }
+  .btn-big {
+    @apply text-black font-inter text-3xl border-1 border-black px-32 py-4 rounded-full bg-orange-300 hover:bg-orange-400 transition-all duration-300
+    cursor-pointer shadow-[2px_2px_0_#000] hover:shadow-none
+  }
+  .shadow-main {
+    @apply shadow-[2px_2px_0_#000] 
   }
 }
 
-.outlined-text {
-  -webkit-text-stroke: 2px black;
-  text-shadow: 3px 3px 0 #000;
+@layer utilities {
+  .bg-grid {
+    /* Основной фоновый цвет, светло-лиловый */
+    background-color: #f2e7ff;
+
+    /* Два повторяющихся градиента: вертикальный и горизонтальный */
+    background-image:
+      linear-gradient(to right, #dccceb 2px, transparent 2px),
+      linear-gradient(to bottom, #dccceb 2px, transparent 2px);
+
+    /* Размер «клетки» в пикселях */
+    background-size: 80px 80px;
+
+    /* Чтобы фон занимал всю область */
+    background-repeat: repeat;
+  }
 }
-
-.bg-purple-radial {
-  background: radial-gradient(
-    circle at center,
-    #d2adf5 0%,     /* центр — фиолетовый потемнее */
-    #9964ce 40%,    /* плавный переход */
-    #803aca 100%    /* края — светло-фиолетовые */
-  );
-}
-
-

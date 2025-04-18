@@ -1,17 +1,21 @@
 import Hero from "../components/mainpage/Hero"
-import HowMain from "@/components/howitworks/HowMain"
-import GalleryMain from "@/components/gallery/GalleryMain"
-import LastSectionMain from "@/components/lastsectioin/LastSectionMain"
-
+import HowMain from "../components/howitworks/HowMain"
+import LeaderboardMain from "../components/leaderboard/LeaderboardMain"
+import Marquee from "../components/mainpage/Marquee"
+import FAQsection from "../components/FAQsection/FAQsection"
 export default function Home() {
   return (
+
     <main
-      className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] bg-#000000 font-lacker"
+      className=""
     >
       <Hero />
+      <Marquee />
       <HowMain />
-      <GalleryMain />
-      <LastSectionMain />
+      <Marquee />
+      <LeaderboardMain />
+      <Marquee />
+      <FAQsection/>
     </main>
   )
 }
