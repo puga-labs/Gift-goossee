@@ -1,6 +1,5 @@
 'use client'
 import React, { useState,useEffect } from 'react';
-import Image from 'next/image';
 import { getStickers } from '../../../lib/utils/getImages';
 
 
@@ -16,7 +15,7 @@ export const DECORATION_TYPES = {
  * Начальные размеры декораций по типам
  */
 const DEFAULT_SIZES = {
-  [DECORATION_TYPES.STICKER]: { width: 80, height: 80 },
+  [DECORATION_TYPES.STICKER]: { width: 30, height: 30 },
   [DECORATION_TYPES.TEXT]: { width: 120, height: 40 },
 };
 
@@ -44,7 +43,6 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
     loadStickers();
   }, []);
   
-  if (loading) return <div>Загрузка стикеров...</div>;
   
   // Варианты стикеров
   // const stickerOptions = Array.from({ length: 4 }).map((_, index) => index + 1);
@@ -61,8 +59,8 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
       type,
       option,
       url,
-      x: DEFAULT_SIZES[type].width, // Начальная позиция в центре
-      y: DEFAULT_SIZES[type].height, // Начальная позиция в центре
+      x: DEFAULT_SIZES[type].width*2, // Начальная позиция в центре
+      y: DEFAULT_SIZES[type].height*2, // Начальная позиция в центре
       size: { ...DEFAULT_SIZES[type] },
       rotation: 0,
     };
@@ -92,15 +90,15 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-gray-100 rounded-lg p-4 mb-2.5">
-        <h2 className="text-lg font-medium mb-2.5 text-gray-700">Decorations</h2>
+    <>
+    <div className="border rounded-lg shadow-main bg-white relative p-4 flex flex-col items-start justify-start">
+      <h1 className="text-2xl font-bold border-b-2 border-black/10 pb-2 w-full">Decorations</h1>
         
         {/* Переключатель типов декораций */}
-        <div className="flex gap-2.5 mb-4">
+        <div className="flex gap-2.5 mb-4 pt-4">
           <button 
             onClick={() => setActiveType(DECORATION_TYPES.STICKER)}
-            className={`px-3 py-2 rounded text-sm font-medium ${activeType === DECORATION_TYPES.STICKER ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`btn-sm`}
           >
             Stickers
           </button>
@@ -108,13 +106,13 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
         
         {/* Отображение опций в зависимости от выбранного типа */}
         <div className="grid grid-cols-3 gap-2.5 mb-4 sm:grid-cols-4">
-          {activeType === DECORATION_TYPES.STICKER && stickers.map(option => (
+          {        loading ? <div>Loading...</div> : activeType === DECORATION_TYPES.STICKER && stickers.map(option => (
             <div 
               key={`sticker-${option.name}`}
               onClick={() => addDecoration(DECORATION_TYPES.STICKER, option.name,option.url)}
-              className="border border-gray-300 rounded cursor-pointer p-1.5 text-center hover:shadow-md transition-shadow"
+              className="overflow-hidden border-black rounded-lg cursor-pointer transition-all duration-200 hover:translate-y-[-3px] hover:shadow-md"
             >
-              <img 
+              <img
                 src={option.url}
                 alt={`Sticker ${option.name}`}
                 className="w-full h-12 object-contain"
@@ -123,59 +121,65 @@ export function DecorationManager({ decorations, onDecorationsChange, selectedDe
           ))}
         </div>
         
+        
         {/* Список добавленных декораций */}
-        {decorations.length > 0 && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-700">Added Elements</h3>
-              <button 
-                onClick={removeAllDecorations}
-                className="text-sm text-red-500 hover:text-red-700 px-2 py-1 rounded border border-red-300 hover:bg-red-50"
-              >
-                Удалить все
-              </button>
-            </div>
-            <div className="space-y-2">
-              {decorations.map(decoration => (
-                <div 
-                  key={`decoration-item-${decoration.id}`}
-                  className={`flex items-center justify-between p-2 rounded ${selectedDecoration === decoration.id ? 'bg-blue-100' : 'bg-white'} border border-gray-200`}
-                  onClick={() => onSelectDecoration(decoration.id)}
-                >
-                  <div className="flex items-center">
-                    {decoration.type === DECORATION_TYPES.STICKER ? (
-                      <img 
-                        src={decoration.url}
-                        alt="Sticker"
-                        className="w-8 h-8 object-contain mr-2"
-                      />
-                    ) : (
-                      <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded mr-2">
-                        <span className="text-xs text-black">Txt</span>
-                      </span>
-                    )}
-                    <span className="text-sm truncate max-w-[150px] text-black">
-                      {decoration.type === DECORATION_TYPES.STICKER 
-                        ? `Sticker ${decoration.option}` 
-                        : decoration.option}
-                    </span>
-                  </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeDecoration(decoration.id);
-                    }}
-                    className="text-red-500 hover:text-red-700 p-1"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+      {decorations.length > 0 && (
+      <div className=" w-full h-[200px] relative p-2 flex flex-col items-start justify-start">
+      <div className="flex items-center justify-between w-full mb-2">
+        <h3 className="text-sm font-bold text-gray-700">Added Elements</h3>
+        <button 
+          onClick={removeAllDecorations}
+          className="px-3 py-1 rounded-lg transition-colors duration-200 btn-sm px-3! py-1! bg-white! hover:bg-white! text-sm! rounded-lg!"
+        >
+          Remove all
+        </button>
+      </div>
+      <div className="w-full h-full overflow-y-auto">
+      <div className="space-y-2  grid grid-cols-3 gap-4 p-2">
+        {decorations.map(decoration => (
+          <div 
+            key={`decoration-item-${decoration.id}`}
+            className={`flex items-center justify-between p-2 overflow-hidden border-black rounded-lg cursor-pointer transition-all duration-200 hover:translate-y-[-3px] hover:shadow-md ${
+              selectedDecoration === decoration.id ? 'shadow-main px-3 py-1 rounded-lg transition-colors duration-200 btn-sm px-3! py-1! bg-white! hover:bg-white! text-sm! rounded-lg!' : 'border-transparent'
+            }`}
+            onClick={() => onSelectDecoration(decoration.id)}
+          >
+            <div className="flex items-center">
+              {decoration.type === DECORATION_TYPES.STICKER ? (
+                <img 
+                  src={decoration.url}
+                  alt="Sticker"
+                  className="w-8 h-8 object-contain mr-2"
+                />
+              ) : (
+                <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded mr-2">
+                  <span className="text-xs text-black">Txt</span>
+                </span>
+              )}
+              <span className="text-sm truncate max-w-[150px] text-black">
+                {decoration.type === DECORATION_TYPES.STICKER 
+                  ? `Sticker ${decoration.option.split('.')[0]}` 
+                  : decoration.option}
+              </span>
+            </div>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                removeDecoration(decoration.id);
+              }}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+      </div>
+      
     </div>
+      )}
+</>
   );
 }
 

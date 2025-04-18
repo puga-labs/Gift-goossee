@@ -1,13 +1,11 @@
 import Hero from "../components/mainpage/Hero"
-import HowMain from "@/components/howitworks/HowMain"
-import LeaderboardMain from "@/components/leaderboard/LeaderboardMain"
-import Marquee from "@/components/mainpage/Marquee"
-import FAQsection from "@/components/FAQsection/FAQsection"
-
-
-
+import HowMain from "../components/howitworks/HowMain"
+import LeaderboardMain from "../components/leaderboard/LeaderboardMain"
+import Marquee from "../components/mainpage/Marquee"
+import FAQsection from "../components/FAQsection/FAQsection"
 export default function Home() {
   return (
+
     <main
       className=""
     >

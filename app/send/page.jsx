@@ -22,9 +22,10 @@ const Page = () => {
     const [selectedDecoration, setSelectedDecoration] = useState(null);
 
     return (
-        <div className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] bg-black font-lacker flex flex-row gap-[2vh] purpleBox">
-            <div className="flex flex-col gap-[2vh]">
-                <Constructor 
+        <div className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] font-lacker  gap-[2vh] bg-purple-100 w-full ">
+            <div className="flex flex-row gap-[2vh] justify-center pt-16">
+                <div className="flex flex-col gap-[2vh]">
+                    <Constructor 
                     imageOptions={imageOptions} 
                     setImageOptions={setImageOptions}
                     decorations={decorations}
@@ -34,7 +35,7 @@ const Page = () => {
                 />
             </div>
 
-            <div className="flex flex-col bg-gray-100 rounded-lg p-4 shadow-md h-[900px] w-[600px]">
+            <div className="flex flex-col gap-[2vh] max-w-[360px]">
                 {/* Обновлённый ResultImage с поддержкой декораций */}
                 <ResultImage 
                     imageOptions={imageOptions} 
@@ -49,6 +50,7 @@ const Page = () => {
                     imageOptions={imageOptions}
                     decorations={decorations}
                 />
+            </div>
             </div>
         </div>
     );

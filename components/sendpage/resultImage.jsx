@@ -182,9 +182,9 @@ export function ResultImage({
     }, [isDragging, resizing, draggedDecoration, decorations]);
     
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full gap-4 p-5">
+        <div className=" border rounded-lg shadow-main bg-white relative flex flex-col items-start justify-start overflow-hidden w-[300px] h-[300px]">
             <div 
-                className="relative w-full w-[500px] aspect-square overflow-hidden shadow-lg" 
+                className="relative w-full h-full aspect-square overflow-hidden shadow-lg" 
                 ref={imageWrapperRef} 
                 onClick={() => onSelectDecoration(null)}
             >
@@ -193,8 +193,8 @@ export function ResultImage({
                     src={`/GIFT_IMAGES/BACKGROUND/${imageOptions.BACKGROUND}.png`} 
                     alt="Фон" 
                     className="absolute top-0 left-0 w-full h-full object-cover z-[1]" 
-                    width={500}
-                    height={500}
+                    width={300}
+                    height={300}
                 />
                 
                 {/* Изображение подарка */}
@@ -202,8 +202,8 @@ export function ResultImage({
                     src={`/GIFT_IMAGES/GIFT/${imageOptions.GIFT}.png`} 
                     alt="Подарок" 
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 object-contain z-[2]" 
-                    width={500}
-                    height={500}
+                    width={300}
+                    height={300}
                 />
                 
                 
