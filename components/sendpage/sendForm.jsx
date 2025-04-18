@@ -14,21 +14,12 @@ import { useAccount } from 'wagmi'
  * @param {Object} props.imageOptions - Опции изображения (фон, подарок, базовое украшение)
  * @param {Array} props.decorations - Массив пользовательских декораций
  */
-export function SendForm({ imageOptions, decorations = [] }) {
+export function SendForm({ imageOptions, decorations = [], txData, setTxData }) {
   const { address } = useAccount();
   const { sendTransactionAsync } = useSendTransaction({ rpcConfig });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  // Данные транзакции
-  const [txData, setTxData] = useState({
-    to: '',
-    amount: '',
-    message: '',
-    animation: 'Default',
-    mintDate: new Date(),
-  });
 
   /**
    * Обработчик отправки подарка
@@ -61,15 +52,9 @@ export function SendForm({ imageOptions, decorations = [] }) {
 
       // Данные для транзакции
       const receiverAddress = txData.to;
-      const giftMessage = txData.message || 'Gift for you!';
+      const giftMessage = txData.message;
       const giftValue = txData.amount;
 
-      console.log('Отправка подарка...', {
-        to: receiverAddress,
-        message: giftMessage,
-        amount: giftValue,
-        image: imageUrl
-      });
 
       // Создаем данные для вызова контракта
       const sendData = createSendData(
@@ -144,7 +129,7 @@ export function SendForm({ imageOptions, decorations = [] }) {
 
       <div className="w-full flex mb-2.5">
         <input
-          type="text"
+          type="number"
           placeholder="0.00"
           value={txData.amount}
           onChange={(e) => setTxData({ ...txData, amount: e.target.value })}

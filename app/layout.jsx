@@ -28,16 +28,17 @@ const inter = Inter({
 
 export default function RootLayout({ children }) {
   return (
-    <Providers>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
         >
+          <Providers>
           <Header />
           {children}
           <Footer />
+          </Providers>
+
         </body>
       </html>
-    </Providers>
   )
 }
