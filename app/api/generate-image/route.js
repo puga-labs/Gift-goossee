@@ -1,4 +1,4 @@
-import { createGiftImage, uploadToPinata } from '../../../utils/back/pinata/pinata';
+import { createGiftImage, uploadToSupabase } from '../../../utils/back/supabaseloader';
 import { NextResponse } from 'next/server';
 
 /**
@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     // Получаем данные из запроса
     const requestData = await request.json();
-    const { imageOptions, decorations } = requestData;
+    const { imageOptions, decorations, image_id } = requestData;
     
     if (!imageOptions) {
       return NextResponse.json({ 
@@ -38,7 +38,7 @@ export async function POST(request) {
     console.log('Изображение успешно создано, размер буфера:', imageBuffer?.length || 0);
     
     // Загружаем в Pinata
-    const result = await uploadToPinata(imageBuffer);
+    const result = await uploadToSupabase(imageBuffer, image_id);
     
     console.log('Результат загрузки в Pinata:', result);
     
