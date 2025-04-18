@@ -186,7 +186,7 @@ export function ResultImage({
             <div 
                 className="relative w-full h-full aspect-square overflow-hidden shadow-lg" 
                 ref={imageWrapperRef} 
-                onClick={() => onSelectDecoration(null)}
+                onDoubleClick={() => onSelectDecoration(null)}
             >
                 {/* Фоновое изображение */}
                 <img 
