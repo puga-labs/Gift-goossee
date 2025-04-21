@@ -3,19 +3,19 @@ import HowMain from "../components/howitworks/HowMain"
 import LeaderboardMain from "../components/leaderboard/LeaderboardMain"
 import Marquee from "../components/mainpage/Marquee"
 import FAQsection from "../components/FAQsection/FAQsection"
+import ButtonTop from "../components/elements/ButtonTop"
+
 export default function Home() {
   return (
-
-    <main
-      className=""
-    >
+    <main>
       <Hero />
       <Marquee />
       <HowMain />
       <Marquee />
       <LeaderboardMain />
       <Marquee />
-      <FAQsection/>
+      <FAQsection />
+      <ButtonTop />
     </main>
   )
 }

@@ -40,15 +40,6 @@ export function SendForm({ imageOptions, decorations = [], txData, setTxData }) 
     setSuccess('');
 
     try {
-      // Генерируем изображение через API на сервере
-      console.log('Запрос на генерацию изображения...');
-      const imageUrl = await generateGiftImage(imageOptions, decorations);
-
-      if (!imageUrl) {
-        throw new Error('Не удалось создать и загрузить изображение');
-      }
-
-      console.log('Изображение загружено:', imageUrl);
 
       // Данные для транзакции
       const receiverAddress = txData.to;
@@ -62,17 +53,19 @@ export function SendForm({ imageOptions, decorations = [], txData, setTxData }) 
         giftMessage,
         txData.animation, // animation
         new Date().getTime(), // timestamp в секундах
-        txData.mintDate.getTime(), // date
-        imageUrl, // imageCloseUrl
-        imageUrl  // imageOpenUrl
+        txData.mintDate.getTime() // date
       );
 
       // Отправляем транзакцию
       const tx = await sendTransactionAsync({
         to: SMART_CONTRACT_ADDRESS,
-        data: sendData,
+        data: sendData.data,
         value: ethers.parseEther(giftValue.toString()),
       });
+
+      // Генерируем изображение через API на сервере
+      console.log('Запрос на генерацию изображения...');
+      await generateGiftImage(imageOptions, decorations, sendData.tokenId, giftMessage);
 
       await updtLb(address, 'sent', tx);
 

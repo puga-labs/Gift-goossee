@@ -5,6 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css"
 import Footer from "../components/Footer"
 import Header from "../components/header/Header"
 import Providers from "../components/Providers"
+import Template from "./template"
 
 export const metadata = {
   title: "Goossee",
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
         >
           <Providers>
           <Header />
-          {children}
+          <Template>{children}</Template>
           <Footer />
           </Providers>
 

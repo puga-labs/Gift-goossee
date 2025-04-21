@@ -107,7 +107,7 @@ const Page = () => {
                 <p>No NFTs found</p>
             ) : (
                 <div className="flex flex-wrap gap-4 justify-center">
-                    {nftList.map((nft) => {
+                    {nftList?.map((nft) => {
                         const isClaimed = nft.attributes?.some(
                             attr => attr.trait_type === 'Claimed' && attr.value === 'true'
                         );

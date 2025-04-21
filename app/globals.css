@@ -20,12 +20,16 @@ body {
   font-color: black;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer {
   .test {
     @apply border-1 border-green-400;
   }
   .btn-sm {
-    @apply text-black font-inter text-xs border-1 border-black px-16 py-2 rounded-xl bg-orange-300 hover:bg-orange-400 transition-all duration-300
+    @apply text-black font-inter text-[14px] border-1 border-black px-10 py-2 rounded-xl bg-orange-300 hover:bg-orange-400 transition-all duration-300
     cursor-pointer shadow-[2px_2px_0_#000] hover:shadow-none
   }
   .btn-big {
