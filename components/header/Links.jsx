@@ -9,9 +9,9 @@ const Links = () => {
     { href: "/", label: "Home" },
     { href: "/send", label: "Send" },
     { href: "/receive", label: "Receive" },
-    { href: "/faq", label: "FAQ" },
     // { href: "/how-it-works", label: "How it works" },
-    { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/#leaderboard", label: "Leaderboard" },
+    { href: "/#faq", label: "FAQ" },
   ]
 
   return (
