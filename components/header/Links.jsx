@@ -10,7 +10,7 @@ const Links = () => {
     { href: "/send", label: "Send" },
     { href: "/receive", label: "Receive" },
     { href: "/faq", label: "FAQ" },
-    { href: "/how-it-works", label: "How it works" },
+    // { href: "/how-it-works", label: "How it works" },
     { href: "/leaderboard", label: "Leaderboard" },
   ]
 
