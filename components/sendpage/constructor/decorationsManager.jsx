@@ -1,8 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react"
 // import { getStickers } from "../../../lib/utils/getImages"
-import { getStickers } from '../../../lib/utils/images';
-
+import { getStickers } from "../../../lib/utils/images"
 
 /**
  * Типы декораций, доступные в системе
@@ -97,12 +96,12 @@ export function DecorationManager({
 
   return (
     <>
-      <div className="border rounded-lg shadow-main bg-white relative p-4 flex flex-col items-start justify-start">
+      <div className="border rounded-lg shadow-main bg-white relative p-4 flex flex-col items-start justify-start ">
         <h1 className="text-2xl font-bold border-b-2 border-black/10 pb-2 w-full">
           Stickers
         </h1>
         {/* Отображение опций в зависимости от выбранного типа */}
-        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 mt-4 max-h-[240px] overflow-y-auto pr-4">
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 mt-4 max-h-[240px] overflow-y-auto pr-4 w-full py-1">
           {loading ? (
             <div>Loading...</div>
           ) : (
@@ -118,7 +117,7 @@ export function DecorationManager({
                   )
                 }
                 className="overflow-hidden border-black/40 rounded-lg py-3 shadow-main opacity-50 hover:opacity-100
-                cursor-pointer border hover:border-black transition-all duration-200 hover:translate-y-[-3px]"
+                cursor-pointer border hover:border-black transition-all duration-200 hover:translate-y-[-3px] "
               >
                 <img
                   src={option.url}
