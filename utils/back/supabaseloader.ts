@@ -1,12 +1,12 @@
 import axios from 'axios';
-import FormData from 'form-data';
 import sharp from 'sharp';
+import { uploadImage } from '../../lib/utils/images';
+
 const DECORATION_TYPES = {
   STICKER: 'sticker', // Стикеры/наклейки
   TEXT: 'text',       // Текстовые элементы
 };
 
-const PINATA_JWT=`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJiOWM1OTkxNy01MWUzLTQ1MzItODk1Yy05OTk5YmVhMWFhYjQiLCJlbWFpbCI6InB1Z2FndWdhQG1haWwucnUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJGUkExIn0seyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMjk0YWVmZWEwMjQyZTc4NzQ4ZWUiLCJzY29wZWRLZXlTZWNyZXQiOiI1ZjExYTA4Mzc3OGE4MDY0MWY0N2UxMWQ1OGUzYTYxODc1ZDQ5MTc1ZTM2NmZjNmU3MjA0ZDhlOTJlMzVlY2ZmIiwiZXhwIjoxNzc1MjE3MTU4fQ.Gw2-YS94rXH9JWqySyRH_GuLJpO7Sdg-ou4LEFGLXgw`
 
 /**
  * Создает изображение с фоном, подарком и декорациями на сервере
@@ -15,6 +15,7 @@ const PINATA_JWT=`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iO
  * @param {number} options.gift - Индекс изображения подарка
  * @param {number} options.decoration - Индекс стандартного украшения 
  * @param {Array} options.decorations - Массив пользовательских декораций
+ * @param {string} message - Сообщение для подарка
  * @returns {Promise<Buffer>} - Buffer с готовым изображением
  */
 export async function createGiftImage(options: {
@@ -31,7 +32,9 @@ export async function createGiftImage(options: {
     size: { width: number, height: number },
     rotation: number
   }>
-}): Promise<Buffer> {
+},
+message:string
+): Promise<Buffer> {
   try {
     // Размер выходного изображения
     const outputWidth = 500;
@@ -266,6 +269,45 @@ export async function createGiftImage(options: {
       }
     }
     
+    // Добавляем фиксированный текст внизу изображения
+    try {
+      const text = message || 'test'; // Используем переданный текст или значение по умолчанию
+      const fontSize = 24;
+      const textBottom = 30; // Отступ от нижней границы в пикселях
+      
+      const textSvg = Buffer.from(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="${outputWidth}" height="${outputHeight}">
+          <text 
+            x="50%" 
+            y="${outputHeight - textBottom}" 
+            font-family="inter, sans-serif" 
+            font-size="${fontSize}" 
+            font-weight="bold"
+            text-anchor="middle" 
+            dominant-baseline="middle"
+            fill="white"
+            stroke="black"
+            stroke-width="1"
+          >${text}</text>
+        </svg>
+      `);
+      
+      const textLayer = {
+        input: textSvg,
+        top: 0,
+        left: 0,
+        premultiplied: true
+      };
+      
+      finalImage = await sharp(finalImage)
+        .composite([textLayer])
+        .toBuffer();
+        
+      console.log('Добавлен фиксированный текст внизу изображения');
+    } catch (textError) {
+      console.error('Ошибка при добавлении фиксированного текста:', textError);
+    }
+    
     console.log('Композиция успешно создана');
     // Проверяем размеры итогового изображения
     try {
@@ -349,20 +391,25 @@ async function rotateImage(image: any, rotation: number, width: number, height: 
 /**
  * Создает изображение и загружает его в Pinata
  * @param {Object} options - Опции изображения
+ * @param {string} message - Сообщение для подарка
+ * @param {string} image_id - Идентификатор изображения
  * @returns {Promise<Object>} - Результат загрузки с URL
  */
 export async function createAndUploadImage(options: {
   background: number,
   gift: number,
   decoration?: number,
-  decorations?: Array<any>
-}) {
+  decorations?: Array<any>,
+},   
+    message: string, 
+    image_id: string
+) {
   try {
     // Создаем изображение
-    const imageBuffer = await createGiftImage(options);
+    const imageBuffer = await createGiftImage(options, message);
     
     // Загружаем в Pinata
-    const result = await uploadToPinata(imageBuffer);
+    const result = await uploadToSupabase(imageBuffer, image_id);
     
     return result;
   } catch (error) {
@@ -378,10 +425,10 @@ export async function createAndUploadImage(options: {
 /**
  * Загружает изображение в Pinata
  * @param {string|Buffer} image - Изображение в формате base64 или Buffer
- * @param {string} filename - Имя файла
+ * @param {string} image_id - Имя файла
  * @returns {Promise<Object>} - Результат загрузки с URL
  */
-export async function uploadToPinata(image: string | Buffer, filename: string = 'gift-image.png') {
+export async function uploadToSupabase(image: string | Buffer, image_id: string) {
   try {
     // Проверяем, что image это строка или Buffer
     let imageBuffer;
@@ -396,37 +443,18 @@ export async function uploadToPinata(image: string | Buffer, filename: string = 
     } else {
       throw new Error('Неверный формат изображения: ожидается строка base64 или Buffer');
     }
-    
-    // Создаем форму для загрузки
-    const formData = new FormData();
-    formData.append('file', imageBuffer, {
-      filename,
-      contentType: 'image/png'
-    });
-    formData.append('name', filename);
-    formData.append('network', 'public');
 
-    // Загружаем в Pinata
-    const response = await axios.post("https://uploads.pinata.cloud/v3/files", formData, {
-      headers: { 
-        'Authorization': `Bearer ${PINATA_JWT}`,
-        ...formData.getHeaders() // Добавляем заголовки из FormData
-      },
-    });
-    
-    console.log('Загрузка в Pinata успешна:', response.data);
+    await uploadImage(image_id,imageBuffer)
 
     return {
-      link: `https://magenta-patient-skink-342.mypinata.cloud/ipfs/${response.data.data.cid}`,
       status: 'success',
       message: 'success'
     };
   } catch (error) {
     console.error('Ошибка при загрузке в Pinata:', error);
     return {
-      link: null,
       status: 'error',
-      message: error.message || 'Unknown error'
+      message: 'Unknown error'
     };
   }
 }

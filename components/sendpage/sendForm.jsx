@@ -44,30 +44,35 @@ export function SendForm({
     setSuccess("")
 
     try {
-      // 1) Генерация изображения
-      const imageUrl = await generateGiftImage(imageOptions, decorations)
-      if (!imageUrl) throw new Error("Failed to generate image")
+
+
+      // Данные для транзакции
+      const receiverAddress = txData.to;
+      const giftMessage = txData.message;
+      const giftValue = txData.amount;
 
       // 2) Данные для контракта
       const sendData = createSendData(
-        txData.to,
-        txData.message,
-        txData.animation,
-        Math.floor(Date.now() / 1000),
-        txData.mintDate.getTime(),
-        imageUrl,
-        imageUrl
-      )
+        receiverAddress,
+        giftMessage,
+        txData.animation, // animation
+        new Date().getTime(), // timestamp в секундах
+        txData.mintDate.getTime() // date
+      );
 
-      // 3) Отправка транзакции
+      // Отправляем транзакцию
       const tx = await sendTransactionAsync({
         to: SMART_CONTRACT_ADDRESS,
-        data: sendData,
-        value: ethers.parseEther(txData.amount.toString()),
-      })
+        data: sendData.data,
+        value: ethers.parseEther(giftValue.toString()),
+      });
 
-      // 4) Обновление лидерборда
-      await updtLb(address, "sent", tx)
+      // Генерируем изображение через API на сервере
+      console.log('Запрос на генерацию изображения...');
+      await generateGiftImage(imageOptions, decorations, sendData.tokenId, giftMessage);
+
+      await updtLb(address, 'sent', tx);
+
 
       setSuccess(`Gift sent! TxHash: ${tx}`)
       // сброс формы

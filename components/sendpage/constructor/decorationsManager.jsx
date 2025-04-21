@@ -1,6 +1,8 @@
 "use client"
 import React, { useState, useEffect } from "react"
 import { getStickers } from "../../../lib/utils/getImages"
+// import { getStickers } from '../../../lib/utils/images';
+
 
 /**
  * Типы декораций, доступные в системе

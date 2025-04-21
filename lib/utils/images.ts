@@ -14,8 +14,29 @@ export async function getStickers() {
   }
   
   // Формируем URL для каждого стикера
-  return data.map(file => ({
+  return data
+  .filter(el => el.name != ".emptyFolderPlaceholder")
+  .map(file => ({
     name: file.name,
     url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/stickers/${file.name}`
   }));
+}
+
+export async function uploadImage(id, buffer){
+  // Получаем список файлов из бакета stickers
+  const { data, error } = await supabase
+    .storage
+    .from('nfts')
+    .upload(`${id}.png`,buffer, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+  console.log(data);
+  if (error) {
+    console.error('Upload result image error', error);
+    return [];
+  }
+  
+  return true
 }
