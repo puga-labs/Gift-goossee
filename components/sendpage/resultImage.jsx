@@ -247,6 +247,21 @@ export function ResultImage({
                                         />
                                     )}
                                     
+                                    {/* Кнопка для быстрого удаления */}
+                                    {isSelected && (
+                                        <button 
+                                            className="absolute -right-3 -top-3 w-6 h-6 bg-red-500 rounded-full text-white flex items-center justify-center border-2 border-white z-20 hover:scale-110 transition-transform"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const updatedDecorations = decorations.filter(d => d.id !== decoration.id);
+                                                onDecorationsChange(updatedDecorations);
+                                                onSelectDecoration(null);
+                                            }}
+                                        >
+                                            ×
+                                        </button>
+                                    )}
+                                    
                                     {/* Кнопки для вращения */}
                                     {isSelected && (
                                         <div className="absolute -left-3 -bottom-3 flex gap-1">

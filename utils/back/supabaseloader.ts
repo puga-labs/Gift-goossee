@@ -280,7 +280,7 @@ message:string
           <text 
             x="50%" 
             y="${outputHeight - textBottom}" 
-            font-family="Arial, sans-serif" 
+            font-family="inter, sans-serif" 
             font-size="${fontSize}" 
             font-weight="bold"
             text-anchor="middle" 

@@ -65,7 +65,7 @@ export function SendForm({ imageOptions, decorations = [], txData, setTxData }) 
 
       // Генерируем изображение через API на сервере
       console.log('Запрос на генерацию изображения...');
-      await generateGiftImage(imageOptions, decorations, sendData.tokenId);
+      await generateGiftImage(imageOptions, decorations, sendData.tokenId, giftMessage);
 
       await updtLb(address, 'sent', tx);
 
