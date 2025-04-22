@@ -169,7 +169,11 @@ export function SendForm({
             type="number"
             placeholder="0.00"
             value={txData.amount}
-            onChange={(e) => setTxData({ ...txData, amount: e.target.value })}
+            onChange={(e) => {
+              if (e.target.value >= 0) {
+                setTxData({ ...txData, amount: e.target.value })
+              }
+            }}
             disabled={isLoading}
             className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
           />

@@ -124,8 +124,8 @@ export function ResultImage({
                     // Ограничиваем позицию внутри контейнера
                     return {
                         ...d,
-                        x: Math.min(Math.max(0, newX), 100),
-                        y: Math.min(Math.max(0, newY), 100)
+                        x: Math.min(Math.max(0, newX), 120),
+                        y: Math.min(Math.max(0, newY), 120)
                     };
                 }
                 return d;
@@ -258,7 +258,7 @@ export function ResultImage({
                                                 onSelectDecoration(null);
                                             }}
                                         >
-                                            ×
+                                            x
                                         </button>
                                     )}
                                     
