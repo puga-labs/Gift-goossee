@@ -152,7 +152,12 @@ export function SendForm({
           type="text"
           placeholder="Gift Message"
           value={txData.message}
-          onChange={(e) => setTxData({ ...txData, message: e.target.value })}
+          onChange={(e) =>
+            {  if(e.target.value.length <= 50){
+              setTxData({ ...txData, message: e.target.value })
+            }
+          }
+          }
           disabled={isLoading}
           className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
         />

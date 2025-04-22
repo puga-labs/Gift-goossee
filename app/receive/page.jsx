@@ -80,10 +80,14 @@ export default function Page() {
         to: SMART_CONTRACT_ADDRESS,
         data: txData,
       })
-      setMintHash(txHash)
-      await updtLb(address, "mint", txHash)
-      const nftData = await getNftData(selectedNft.tokenId)
-      setSelectedNft(nftData)
+      if (txHash) {
+        setMintHash(txHash)
+        await updtLb(address, "mint", txHash)
+        const nftData = await getNftData(selectedNft.tokenId)
+        setSelectedNft(nftData)
+      } else {
+        console.error("Transaction failed")
+      }
     } catch (err) {
       console.error(err)
     } finally {

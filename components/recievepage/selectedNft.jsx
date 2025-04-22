@@ -17,7 +17,7 @@ const SelectedNftItem = ({ item, onClick, isMinting }) => (
     )}
     {item?.attributes?.some(
       (attr) => attr.trait_type === "Claimed" && attr.value === "false"
-    ) && (
+    ) && (new Date(item?.attributes?.find(attr => attr.trait_type === "Mint Date")?.value) < new Date() ?
       <button
         className="absolute btn-sm bottom-4 left-1/2 -translate-x-1/2"
         onClick={onClick}
@@ -25,7 +25,11 @@ const SelectedNftItem = ({ item, onClick, isMinting }) => (
       >
         {isMinting ? "Minting..." : "Mint"}
       </button>
-    )}
+     : (
+      <p className="absolute btn-sm bottom-4 left-1/2 -translate-x-1/2">
+        Pending
+      </p>
+    ))}
   </div>
 )
 
@@ -48,7 +52,7 @@ const SelectedNftInfo = ({ item }) => {
     <div className="flex flex-col gap-3 max-w-[360px]">
       <div className="bg-orange-300 p-2 rounded-lg border shadow-main mb-6">
         <h1>{item?.name}</h1>
-        <p>
+        <p className="break-words whitespace-pre-wrap ">
           Message: {item?.message ? item.message : "Choose your unclaimed gift!"}
         </p>
       </div>

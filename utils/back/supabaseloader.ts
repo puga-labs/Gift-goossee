@@ -272,23 +272,112 @@ message:string
     // Добавляем фиксированный текст внизу изображения
     try {
       const text = message || 'test'; // Используем переданный текст или значение по умолчанию
-      const fontSize = 24;
-      const textBottom = 30; // Отступ от нижней границы в пикселях
+      const fontSize = 28; 
+      const textBottom = 8; 
+      
+      // Подготавливаем безопасный текст для SVG
+      const safeText = String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+      
+      // Обработка существующих переносов строк в тексте
+      const textLines = safeText.split('\n');
+      const maxCharsPerLine = 27;
+      const lines = [];
+      
+      // Обрабатываем каждую строку отдельно
+      for (const textLine of textLines) {
+        // Если строка пустая - добавляем пустую строку
+        if (!textLine.trim()) {
+          lines.push('');
+          continue;
+        }
+        
+        // Улучшенный алгоритм разбиения строки на части
+        const words = textLine.split(' ');
+        let currentLine = '';
+        
+        // Формируем строки с учетом максимальной длины
+        for (const word of words) {
+          // Если слово вместе с пробелом не помещается, добавляем строку и начинаем новую
+          if (currentLine.length + word.length + 1 > maxCharsPerLine) {
+            if (currentLine) {
+              lines.push(currentLine);
+              currentLine = word;
+            } else {
+              // Слово само по себе длиннее максимальной длины строки
+              // В этом случае разбиваем длинное слово
+              if (word.length > maxCharsPerLine) {
+                // Разбиваем слово на части
+                for (let i = 0; i < word.length; i += maxCharsPerLine) {
+                  lines.push(word.substr(i, maxCharsPerLine));
+                }
+              } else {
+                lines.push(word);
+              }
+              currentLine = '';
+            }
+          } else {
+            // Добавляем слово к текущей строке
+            currentLine += (currentLine ? ' ' : '') + word;
+          }
+        }
+        
+        // Добавляем последнюю строку, если она есть
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+      }
+      
+      // Определяем высоту контейнера в зависимости от количества строк
+      const lineCount = lines.length;
+      const lineHeight = 1.2; // Межстрочный интервал
+      const rectHeight = lineCount === 1 ? 34*1.6 : fontSize * lineCount * lineHeight + 16; // Добавляем отступы сверху и снизу
+      
+      // Создаем SVG с отдельными текстовыми элементами для каждой строки
+      let svgText = '';
+      
+      // Вычисляем координату Y для центра прямоугольника
+      const rectY = outputHeight - textBottom - rectHeight;
+      const rectCenterY = rectY + rectHeight / 2;
+      
+      // Вычисляем смещение для центрирования всех строк текста
+      const totalTextHeight = lineCount * fontSize * lineHeight;
+      const startY = rectCenterY - (totalTextHeight / 2) + fontSize / 2;
+      
+      for (let i = 0; i < lines.length; i++) {
+        // Позиция Y с учетом центрирования
+        const yPos = startY + i * (fontSize * lineHeight);
+        
+        svgText += `<text 
+          x="50%" 
+          y="${yPos+8}" 
+          font-family="Inter, 'Inter Fallback', system-ui, sans-serif" 
+          font-size="${fontSize}" 
+          font-weight="bold"
+          text-anchor="middle" 
+          fill="white"
+          stroke-width="0"
+        >${lines[i]}</text>`;
+      }
       
       const textSvg = Buffer.from(`
         <svg xmlns="http://www.w3.org/2000/svg" width="${outputWidth}" height="${outputHeight}">
-          <text 
-            x="50%" 
-            y="${outputHeight - textBottom}" 
-            font-family="inter, sans-serif" 
-            font-size="${fontSize}" 
-            font-weight="bold"
-            text-anchor="middle" 
-            dominant-baseline="middle"
-            fill="white"
+          <rect 
+            x="16" 
+            y="${outputHeight - textBottom - rectHeight}" 
+            width="${outputWidth - 32}" 
+            height="${rectHeight}" 
+            rx="8" 
+            ry="8" 
+            fill="rgba(0,0,0,0.7)" 
             stroke="black"
             stroke-width="1"
-          >${text}</text>
+          />
+          ${svgText}
         </svg>
       `);
       

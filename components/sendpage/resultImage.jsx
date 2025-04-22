@@ -213,8 +213,8 @@ export function ResultImage({
           height={300}
         />
         {!!message && (
-          <div className="absolute left-1/2 bottom-5 -translate-x-1/2 w-4/5 z-[10] text-center p-2 rounded">
-            <p className="font-bold text-white break-words whitespace-pre-wrap">
+          <div className="absolute left-1/2 bottom-1 -translate-x-1/2 w-full p-2  z-[10] text-center ">
+            <p className="font-bold text-white break-words whitespace-pre-wrap bg-black/70 rounded-lg p-1 border border-black">
               {message}
             </p>
           </div>
