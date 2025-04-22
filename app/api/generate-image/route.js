@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     // Получаем данные из запроса
     const requestData = await request.json();
-    const { imageOptions, decorations, image_id } = requestData;
+    const { imageOptions, decorations, image_id, giftMessage } = requestData;
     
     if (!imageOptions) {
       return NextResponse.json({ 
@@ -33,7 +33,7 @@ export async function POST(request) {
       gift: imageOptions.GIFT,
       decoration: imageOptions.DECORATION,
       decorations: decorations || []
-    });
+    }, giftMessage);
     
     console.log('Изображение успешно создано, размер буфера:', imageBuffer?.length || 0);
     

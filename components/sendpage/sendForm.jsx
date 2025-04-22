@@ -1,53 +1,57 @@
-'use client'
-import { createSendData } from '../../utils/back/chain/txs'
-import { useSendTransaction  } from 'wagmi'
-import { useState } from 'react'
-import { generateGiftImage } from '../../utils/imageGenerator'
-import { rpcConfig } from '../../wagmi'
-import { SMART_CONTRACT_ADDRESS } from '../../config'
-import { ethers } from 'ethers'
-import { updtLb } from '../../utils/back/api/leaderboard'
-import { useAccount } from 'wagmi'
+"use client"
+
+import { useState } from "react"
+import { useAccount, useSendTransaction } from "wagmi"
+import { ethers } from "ethers"
+import { createSendData } from "../../utils/back/chain/txs"
+import { generateGiftImage } from "../../utils/imageGenerator"
+import { rpcConfig } from "../../wagmi"
+import { SMART_CONTRACT_ADDRESS } from "../../config"
+import { updtLb } from "../../utils/back/api/leaderboard"
+import { motion, AnimatePresence } from "framer-motion"
+import { AiOutlineClose } from "react-icons/ai"
+
 /**
- * Компонент формы отправки подарка
- * @param {Object} props - Свойства компонента
- * @param {Object} props.imageOptions - Опции изображения (фон, подарок, базовое украшение)
- * @param {Array} props.decorations - Массив пользовательских декораций
+ * Форма отправки подарка
  */
-export function SendForm({ imageOptions, decorations = [], txData, setTxData }) {
-  const { address } = useAccount();
-  const { sendTransactionAsync } = useSendTransaction({ rpcConfig });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+export function SendForm({
+  imageOptions,
+  decorations = [],
+  txData,
+  setTxData,
+}) {
+  const { address } = useAccount()
+  const { sendTransactionAsync } = useSendTransaction({ rpcConfig })
 
-  /**
-   * Обработчик отправки подарка
-   */
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
   const handleSend = async () => {
-    if (!txData.to.startsWith('0x') || txData.to.length !== 42) {
-      setError('Некорректный адрес получателя. Должен начинаться с 0x и содержать 42 символа.');
-      return;
+    // валидация адреса
+    if (!txData.to.startsWith("0x") || txData.to.length !== 42) {
+      setError("Enter valid recipient address (starts with 0x, 42 characters).")
+      return
     }
-
+    // валидация суммы
     if (!txData.amount || parseFloat(txData.amount) <= 0) {
-      setError('Укажите сумму отправки больше 0.');
-      return;
+      setError("Enter amount greater than 0.")
+      return
     }
 
-    setIsLoading(true);
-    setError('');
-    setSuccess('');
+    setIsLoading(true)
+    setError("")
+    setSuccess("")
 
     try {
+
 
       // Данные для транзакции
       const receiverAddress = txData.to;
       const giftMessage = txData.message;
       const giftValue = txData.amount;
 
-
-      // Создаем данные для вызова контракта
+      // 2) Данные для контракта
       const sendData = createSendData(
         receiverAddress,
         giftMessage,
@@ -65,113 +69,184 @@ export function SendForm({ imageOptions, decorations = [], txData, setTxData }) 
 
       // Генерируем изображение через API на сервере
       console.log('Запрос на генерацию изображения...');
-      await generateGiftImage(imageOptions, decorations, sendData.tokenId);
+      await generateGiftImage(imageOptions, decorations, sendData.tokenId, giftMessage);
 
       await updtLb(address, 'sent', tx);
 
-      console.log('Транзакция отправлена:', tx);
-      setSuccess(`Подарок успешно отправлен! Hash: ${tx}`);
-      
-      // Сбрасываем форму
+
+      setSuccess(`Gift sent! TxHash: ${tx}`)
+      // сброс формы
       setTxData({
-        to: '',
-        amount: '',
-        message: '',
-        animation: 'Default',
+        to: "",
+        amount: "",
+        message: "",
+        animation: "Default",
         mintDate: new Date(),
-      });
-    } catch (error) {
-      console.error('Ошибка при отправке:', error);
-      setError(`Ошибка: ${error.message}`);
+      })
+    } catch (err) {
+      console.error(err)
+      setError(`Error: ${err.message}`)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="text-gray-700 mt-5 w-full">
-      {error && (
-        <div className="p-2.5 bg-red-50 text-red-800 rounded mb-4">
-          {error}
-        </div>
-      )}
-      
-      {success && (
-        <div className="p-2.5 bg-green-50 text-green-800 rounded mb-4">
-          {success}
-        </div>
-      )}
-      
-      <div className="w-full mb-2.5">
-        <span className="text-xs text-gray-500 ml-1.5">Message </span>
+    <div className="max-w-xl mx-auto p-6 space-y-6 text-gray-700">
+      {/* Ошибка */}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="relative p-3 bg-red-100 text-red-800 rounded-md border mb-4"
+          >
+            {/* Кнопка закрытия */}
+            <button
+              onClick={() => setError("")}
+              className="absolute top-[-10px] right-[-10px] text-red-800 hover:text-red-600 border rounded-full p-1 cursor-pointer
+              bg-red-100"
+              aria-label="Close"
+            >
+              <AiOutlineClose size={16} strokeWidth={2} />
+            </button>
+            {error}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {success && (
+          <motion.div
+            key="success"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="relative p-3 bg-green-100 text-green-800 rounded-md mb-4"
+          >
+            <button
+              onClick={() => setSuccess("")}
+              className="absolute top-[-10px] right-[-10px] text-green-800 hover:text-green-600 border rounded-full p-1 cursor-pointer
+              bg-green-100"
+              aria-label="Close"
+            >
+              <AiOutlineClose size={16} strokeWidth={2} />
+            </button>
+            {success}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Сообщение */}
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-600">
+          Message
+        </label>
         <input
           type="text"
           placeholder="Gift Message"
           value={txData.message}
           onChange={(e) => setTxData({ ...txData, message: e.target.value })}
-          className="w-full p-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
           disabled={isLoading}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
         />
-      </div>
-      
-      <div className="w-full mb-2.5 flex justify-start">
-        <span className="text-xs text-gray-500 w-1/5">Amount </span>
-        <span className="text-xs text-gray-500 w-2/5">Animation </span>
-        <span className="text-xs text-gray-500 w-2/5">Mint Date </span>
       </div>
 
-      <div className="w-full flex mb-2.5">
-        <input
-          type="number"
-          placeholder="0.00"
-          value={txData.amount}
-          onChange={(e) => setTxData({ ...txData, amount: e.target.value })}
-          className="w-1/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        />
-        <select 
+      {/* --------------------------- */}
+      {/* Секция: Amount + Mint Date  */}
+      {/* --------------------------- */}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Amount */}
+        <div className="flex-1 space-y-1">
+          <label className="block text-sm font-medium text-gray-600">
+            Amount
+          </label>
+          <input
+            type="number"
+            placeholder="0.00"
+            value={txData.amount}
+            onChange={(e) => {
+              if (e.target.value >= 0) {
+                setTxData({ ...txData, amount: e.target.value })
+              }
+            }}
+            disabled={isLoading}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
+          />
+        </div>
+
+        {/* Mint Date */}
+        <div className="flex-1 space-y-1">
+          <label className="block text-sm font-medium text-gray-600">
+            Mint Date
+          </label>
+          <input
+            type="date"
+            value={txData.mintDate.toISOString().split("T")[0]}
+            onChange={(e) => {
+              const d = new Date(e.target.value)
+              if (d >= new Date().setHours(0, 0, 0, 0)) {
+                setTxData({ ...txData, mintDate: d })
+              }
+            }}
+            disabled={isLoading}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
+          />
+        </div>
+      </div>
+
+      {/* --------------------------- */}
+      {/* Секция: Animation (отдельно) */}
+      {/* --------------------------- */}
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-600">
+          Animation
+        </label>
+        <select
+          value={txData.animation}
           onChange={(e) => setTxData({ ...txData, animation: e.target.value })}
-          className="w-2/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          disabled={isLoading}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
         >
           <option value="Default">Default</option>
           <option value="Rare">Rare</option>
           <option value="Legendary">Legendary</option>
           <option value="Epic">Epic</option>
         </select>
-        <input
-          type="date"
-          placeholder="0.00"
-          value={new Date(txData.mintDate).toISOString().split('T')[0]}
-          onChange={(e) => {
-            const date = new Date(e.target.value);
-            if(Math.floor(date.getTime()/86400000) >= Math.floor(new Date().getTime()/86400000)) {
-              console.log(date.getTime())
-              console.log(new Date().getTime())
-              setTxData({ ...txData, mintDate: new Date(Math.floor(date.getTime()/86400000)*86400000) })
-            } 
-          }}
-          className="w-2/5 p-2.5 mr-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        />
       </div>
-      <span className="text-xs text-gray-500">Receiver </span>
-      <div className="w-full flex mb-2.5 justify-start mt-2.5">
-      <input
-          type="text"
-          placeholder="0x..."
-          value={txData.to}
-          onChange={(e) => setTxData({ ...txData, to: e.target.value })}
-          className="w-3/4 p-2.5 rounded border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        />
-      <button 
-        onClick={handleSend} 
-        className={`btn-sm w-1/4 ml-4 items-center flex justify-center`}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Sending...' : 'Send!'}
-      </button>
+
+      {/* --------------------------- */}
+      {/* Секция: Receiver + Send Блок */}
+      {/* --------------------------- */}
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-600">
+            Receiver
+          </label>
+          <input
+            type="text"
+            placeholder="0x..."
+            value={txData.to}
+            onChange={(e) => setTxData({ ...txData, to: e.target.value })}
+            disabled={isLoading}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md disabled:bg-gray-100"
+          />
+        </div>
+        {/* Кнопка по центру */}
+        <div className="flex justify-center">
+          <button
+            onClick={handleSend}
+            disabled={isLoading}
+            className="btn-sm w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50"
+          >
+            {isLoading ? "Sending..." : "Send!"}
+          </button>
+        </div>
       </div>
     </div>
-  );
+  )
 }

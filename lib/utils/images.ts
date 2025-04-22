@@ -14,7 +14,9 @@ export async function getStickers() {
   }
   
   // Формируем URL для каждого стикера
-  return data.map(file => ({
+  return data
+  .filter(el => el.name != ".emptyFolderPlaceholder")
+  .map(file => ({
     name: file.name,
     url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/stickers/${file.name}`
   }));

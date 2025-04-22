@@ -124,8 +124,8 @@ export function ResultImage({
                     // Ограничиваем позицию внутри контейнера
                     return {
                         ...d,
-                        x: Math.min(Math.max(0, newX), 100),
-                        y: Math.min(Math.max(0, newY), 100)
+                        x: Math.min(Math.max(0, newX), 120),
+                        y: Math.min(Math.max(0, newY), 120)
                     };
                 }
                 return d;
@@ -245,6 +245,21 @@ export function ResultImage({
                                         <div 
                                             className="resize-handle absolute -right-3 -bottom-3 w-6 h-6 bg-blue-500 rounded-full cursor-nwse-resize border-2 border-white z-20 hover:scale-110 transition-transform"
                                         />
+                                    )}
+                                    
+                                    {/* Кнопка для быстрого удаления */}
+                                    {isSelected && (
+                                        <button 
+                                            className="absolute -right-3 -top-3 w-6 h-6 bg-red-500 rounded-full text-white flex items-center justify-center border-2 border-white z-20 hover:scale-110 transition-transform"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const updatedDecorations = decorations.filter(d => d.id !== decoration.id);
+                                                onDecorationsChange(updatedDecorations);
+                                                onSelectDecoration(null);
+                                            }}
+                                        >
+                                            x
+                                        </button>
                                     )}
                                     
                                     {/* Кнопки для вращения */}

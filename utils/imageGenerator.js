@@ -4,7 +4,7 @@
  * @param {Array} decorations - Массив декораций
  * @returns {Promise<string>} - URL сгенерированного изображения
  */
-export async function generateGiftImage(imageOptions, decorations = [], image_id) {
+export async function generateGiftImage(imageOptions, decorations = [], image_id, giftMessage) {
   try {
     console.log('Запрос на генерацию изображения:', { imageOptions, decorationCount: decorations.length });
     console.log(decorations)
@@ -17,7 +17,8 @@ export async function generateGiftImage(imageOptions, decorations = [], image_id
       body: JSON.stringify({
         imageOptions,
         decorations,
-        image_id
+        image_id,
+        giftMessage
       }),
     });
 
