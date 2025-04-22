@@ -131,8 +131,9 @@ export function DecorationManager({
 
         {/* Список добавленных декораций */}
       </div>
-      {decorations.length > 0 && (
+      
         <div className=" w-full h-[200px] relative p-2 flex flex-col items-start justify-start">
+        {decorations.length > 0 && (
           <div className="flex items-center justify-between w-full mb-2">
             <h3 className="text-sm font-bold text-gray-700">Added Elements</h3>
             <button
@@ -142,6 +143,7 @@ export function DecorationManager({
               Remove all
             </button>
           </div>
+        )}
           <div className="w-full h-full overflow-y-auto">
             <div className="space-y-2  grid grid-cols-3 gap-4 p-2">
               {decorations.map((decoration) => (
@@ -186,7 +188,6 @@ export function DecorationManager({
             </div>
           </div>
         </div>
-      )}
     </>
   )
 }
