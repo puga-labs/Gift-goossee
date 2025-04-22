@@ -22,9 +22,6 @@ export function OptionsList({getter, setter, type}) {
                   }`}
                   onClick={() => setter({...getter, [type]: index})}
                 >
-                    {type === 'DECORATION' && index === 0 ? (
-                        <div className='w-full h-20 bg-gray-300'></div>
-                    ) : (
                         <Image 
                             src={`/GIFT_IMAGES/${type}/${index}.png`} 
                             alt={`${type} ${index + 1}`}
@@ -32,7 +29,6 @@ export function OptionsList({getter, setter, type}) {
                             height={150}
                             className="w-full h-20 object-cover block"
                         />
-                    )}
                 </div>
               ))}
             </div>
