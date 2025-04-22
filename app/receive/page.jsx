@@ -10,6 +10,7 @@ import { createClaimData } from "../../utils/back/chain/txs"
 import { updtLb } from "../../utils/back/api/leaderboard"
 import NftList from "../../components/recievepage/nftList"
 import SelectedNft from "../../components/recievepage/selectedNft"
+import confetti from "canvas-confetti"
 /**
  * Custom hook: загружает список NFT по адресу и реагирует на изменение mintHash
  */
@@ -87,6 +88,11 @@ export default function Page() {
       console.error(err)
     } finally {
       setIsMinting(false)
+      confetti({
+        particleCount: 1200,
+        spread: 120,
+        origin: { y: 0.6 },
+      })
     }
   }, [selectedNft, address, sendTransactionAsync])
 
@@ -108,8 +114,16 @@ export default function Page() {
 
   return (
     <div className="relative min-h-screen bg-black bg-grid flex flex-row justify-center items-start pt-10 space-y-8 gap-8">
-            <NftList nftList={nftList} setSelectedNft={handleSelect} isLoading={isLoading}/>
-            <SelectedNft selectedNft={selectedNft} handleMint={handleMint} isMinting={isMinting} />
+      <NftList
+        nftList={nftList}
+        setSelectedNft={handleSelect}
+        isLoading={isLoading}
+      />
+      <SelectedNft
+        selectedNft={selectedNft}
+        handleMint={handleMint}
+        isMinting={isMinting}
+      />
     </div>
   )
 }
