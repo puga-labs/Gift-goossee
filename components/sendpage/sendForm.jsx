@@ -44,12 +44,10 @@ export function SendForm({
     setSuccess("")
 
     try {
-
-
       // Данные для транзакции
-      const receiverAddress = txData.to;
-      const giftMessage = txData.message;
-      const giftValue = txData.amount;
+      const receiverAddress = txData.to
+      const giftMessage = txData.message
+      const giftValue = txData.amount
 
       // 2) Данные для контракта
       const sendData = createSendData(
@@ -58,23 +56,27 @@ export function SendForm({
         txData.animation, // animation
         new Date().getTime(), // timestamp в секундах
         txData.mintDate.getTime() // date
-      );
+      )
 
       // Отправляем транзакцию
       const tx = await sendTransactionAsync({
         to: SMART_CONTRACT_ADDRESS,
         data: sendData.data,
         value: ethers.parseEther(giftValue.toString()),
-      });
+      })
 
       // Генерируем изображение через API на сервере
-      console.log('Запрос на генерацию изображения...');
-      await generateGiftImage(imageOptions, decorations, sendData.tokenId, giftMessage);
+      console.log("Запрос на генерацию изображения...")
+      await generateGiftImage(
+        imageOptions,
+        decorations,
+        sendData.tokenId,
+        giftMessage
+      )
 
-      await updtLb(address, 'sent', tx);
+      await updtLb(address, "sent", tx)
 
-
-      setSuccess(`Gift sent! TxHash: ${tx}`)
+      setSuccess(`Gift sent! TxHash: ${tx.slice(0, 6)}...${tx.slice(-4)}`)
       // сброс формы
       setTxData({
         to: "",

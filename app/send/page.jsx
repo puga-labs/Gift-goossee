@@ -29,7 +29,8 @@ const Page = () => {
     const [selectedDecoration, setSelectedDecoration] = useState(null);
 
     return (
-        <div className="relative min-h-screen overflow-x-hidden flex flex-col items-center justify-center bg-purple-100 w-full select-none">
+        <div className="relative min-h-screen overflow-x-hidden flex flex-col
+         items-center justify-start bg-purple-100 w-full select-none pt-[80px]">
             <div className="flex flex-row gap-[2vh] justify-center">
                 <div className="flex flex-col gap-[2vh]">
                     <Constructor 

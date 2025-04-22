@@ -1,176 +1,191 @@
-'use client'
-import React, { useState, useEffect } from 'react';
-import { useAccount, useSendTransaction } from 'wagmi'
-import { rpcConfig } from '../../wagmi';
-import { SMART_CONTRACT_ADDRESS } from '../../config'
-import { getNftList, getNftData } from '../../utils/back/chain/calls'
-import { createClaimData } from '../../utils/back/chain/txs'
-import { updtLb } from '../../utils/back/api/leaderboard'
+"use client"
 
-const Page = () => {
-    const { sendTransactionAsync } = useSendTransaction({ rpcConfig })
-    const { address } = useAccount()
-    const [nftList, setNftList] = useState([])
-    const [selectedNft, setSelectedNft] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
-    const [mintHash, setMintHash] = useState(null)
-    const [isMinting, setIsMinting] = useState(false)
-    const [forAnimation, setForAnimation] = useState(false)
+import React, { useState, useEffect, useCallback, useMemo } from "react"
+import { useAccount, useSendTransaction } from "wagmi"
+import { ethers } from "ethers"
+import { rpcConfig } from "../../wagmi"
+import { SMART_CONTRACT_ADDRESS } from "../../config"
+import { getNftList, getNftData } from "../../utils/back/chain/calls"
+import { createClaimData } from "../../utils/back/chain/txs"
+import { updtLb } from "../../utils/back/api/leaderboard"
+import { FiLoader } from "react-icons/fi"
 
-    // solve ssr error
-    const [mounted, setMounted] = useState(false);
+/**
+ * Custom hook: загружает список NFT по адресу и реагирует на изменение mintHash
+ */
+function useNftList(address, mintHash) {
+  const [nftList, setNftList] = useState([])
+  const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        setMounted(true);
-      }, []);
-
-
-    useEffect(() => {
-        if (address) {
-            const fetchNftList = async () => {
-                setIsLoading(true)
-                try {
-                    const list = await getNftList(address)
-                    const dataList = []
-                    console.log(list)
-                    if (list.length > 0) {
-                        for (const nft of list) {
-                            if(nft === '') continue
-                            try {
-                                const data = await getNftData(nft)
-                                dataList.push({
-                                    ...data,
-                                    tokenId: nft
-                                })
-                            } catch (error) {
-                                console.error(`Error fetching NFT data for ${nft}:`, error)
-                            }
-                        }
-                        console.log(dataList)
-                        setNftList(dataList)
-                    }
-                } catch (error) {
-                    console.error('Error fetching NFT list:', error)
-                } finally {
-                    setIsLoading(false)
-                }
-            }
-            fetchNftList()
+  useEffect(() => {
+    if (!address) return
+    let cancelled = false
+    const fetchAll = async () => {
+      setLoading(true)
+      try {
+        const list = await getNftList(address)
+        const result = []
+        for (const tokenId of list.filter((id) => id)) {
+          try {
+            const data = await getNftData(tokenId)
+            result.push({ ...data, tokenId })
+          } catch {
+            // skip failed fetch
+          }
         }
-    }, [address,mintHash])
-    
-    const handleMint = async () => {
-        if(selectedNft) {
-            try {
-                setIsMinting(true)
-                const mintData = createClaimData(selectedNft)
-                const result = await sendTransactionAsync({
-                    to: SMART_CONTRACT_ADDRESS,
-                    data: mintData,
-                })
-                setMintHash(result)
-                await updtLb(address, 'mint', result)
-                const nftData = await getNftData(selectedNft)
-                setForAnimation(nftData)
-
-                new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(true)
-                    }, 10000)
-                }).then(() => {
-                    setForAnimation(false)
-                })
-
-
-            } catch (error) {
-                console.error('Error minting NFT:', error)
-            } finally {
-                setIsMinting(false)
-            }
-        }
-    }
-
-    if (!mounted) {
-        return <div className="min-h-screen flex items-center justify-center">
-          <p>Загрузка...</p>
-        </div>;
+        if (!cancelled) setNftList(result)
+      } catch {
+        // ignore overall fetch errors
+      } finally {
+        if (!cancelled) setLoading(false)
       }
+    }
+    fetchAll()
+    return () => {
+      cancelled = true
+    }
+  }, [address, mintHash])
 
-    return (
-        <div className="relative min-h-screen overflow-x-hidden p-[2vh] space-y-[2vh] bg-#000000 font-lacker purpleBox flex flex-col items-center">
-            
-            {!address ? (
-                <p>Connect your wallet</p>
-            ) : isLoading ? (
-                <p>Loading NFTs...</p>
-            ) : nftList.length === 0 ? (
-                <p>No NFTs found</p>
-            ) : (
-                <div className="flex flex-wrap gap-4 justify-center">
-                    {nftList?.map((nft) => {
-                        const isClaimed = nft.attributes?.some(
-                            attr => attr.trait_type === 'Claimed' && attr.value === 'true'
-                        );
-                        
-                        return (
-                            <div 
-                                key={nft.tokenId}
-                                className={`w-[200px] h-[200px] relative cursor-pointer border-2 ${
-                                    selectedNft === nft.tokenId ? 'border-white' : 'border-transparent'
-                                } ${isClaimed ? 'opacity-50' : ''}`}
-                                onClick={() => !isClaimed && setSelectedNft(nft.tokenId)}
-                            >
-                                <img 
-                                    src={nft.image} 
-                                    alt={nft.name} 
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1">
-                                    <p className="text-white text-xs truncate">{nft.name}</p>
-                                </div>
-                                {isClaimed && !forAnimation && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                        <span className="text-white text-xs">Claimed</span>
-                                    </div>
-                                )}
-                                {forAnimation && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                        <h1 className='text-black text-5xl'>{forAnimation.attributes.find(attr => attr.trait_type === 'Animation').value}</h1>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-
-            {selectedNft && (
-                <div className="flex flex-col items-center gap-2">
-                    <button 
-                        className="mt-4 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors disabled:opacity-50"
-                        onClick={handleMint}
-                        disabled={isMinting}
-                    >
-                        {isMinting ? 'Minting...' : 'Mint'}
-                    </button>
-                    
-                    {mintHash && (
-                        <div className="mt-2 text-sm text-white">
-                            Transaction hash: 
-                            <a 
-                                href={`https://testnet.monadexplorer.com/tx/${mintHash}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="ml-1 text-blue-400 hover:underline"
-                            >
-                                {mintHash.slice(0, 6)}...{mintHash.slice(-4)}
-                            </a>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+  return { nftList, loading }
 }
 
-export default Page;
+export default function Page() {
+  const { address } = useAccount()
+  const { sendTransactionAsync } = useSendTransaction({ rpcConfig })
+
+  // список и загрузка
+  const [mintHash, setMintHash] = useState(null)
+  const { nftList, loading: isLoading } = useNftList(address, mintHash)
+
+  // UI state
+  const [selectedId, setSelectedId] = useState(null)
+  const [isMinting, setIsMinting] = useState(false)
+  const [playAnimationFor, setPlayAnimationFor] = useState(null)
+
+  // SSR fix
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => void setMounted(true), [])
+
+  // сортировка и метки
+  const sortedNfts = useMemo(() => nftList, [nftList])
+
+  const handleSelect = useCallback((tokenId, claimed) => {
+    if (!claimed) setSelectedId(tokenId)
+  }, [])
+
+  const handleMint = useCallback(async () => {
+    if (!selectedId) return
+    setIsMinting(true)
+    try {
+      const txData = createClaimData(selectedId)
+      const txHash = await sendTransactionAsync({
+        to: SMART_CONTRACT_ADDRESS,
+        data: txData,
+      })
+      setMintHash(txHash)
+      await updtLb(address, "mint", txHash)
+      const nftData = await getNftData(selectedId)
+      setPlayAnimationFor(nftData)
+      setTimeout(() => setPlayAnimationFor(null), 10_000)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsMinting(false)
+    }
+  }, [selectedId, address, sendTransactionAsync])
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-grid">
+        {/* <p>Loading...</p> */}
+      </div>
+    )
+  }
+
+  if (!address) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Please connect your wallet</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative min-h-screen p-8 bg-black bg-grid flex flex-col justify-center items-center space-y-8">
+      {/* NFT Grid */}
+      {isLoading ? (
+        <div className="text-black flex flex-col justify-center items-center">
+          <FiLoader className="animate-spin text-3xl" />
+          <p>Loading NFTs…</p>
+        </div>
+      ) : sortedNfts.length === 0 ? (
+        <p className="text-black">No NFTs found</p>
+      ) : (
+        <div className="grid grid-cols-4  gap-6 test h-[50%vh]">
+          {sortedNfts.map((nft) => {
+            const claimed = nft.attributes?.some(
+              (a) => a.trait_type === "Claimed" && a.value === "true"
+            )
+            const isSelected = selectedId === nft.tokenId
+            return (
+              <div
+                key={nft.tokenId}
+                onClick={() => handleSelect(nft.tokenId, claimed)}
+                className={`relative h-48 w-48 cursor-pointer border-2 rounded-lg overflow-hidden transition hover:opacity-90
+                    hover:scale-[102%] ${
+                      isSelected
+                        ? "border-black shadow-main"
+                        : claimed
+                        ? "opacity-50 border-transparent"
+                        : "border-transparent"
+                    }`}
+              >
+                <img
+                  src={nft.image}
+                  alt={nft.name}
+                  className="object-cover w-full h-full"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-black/50 p-1">
+                  <p className="text-xs text-white truncate">{nft.name}</p>
+                </div>
+                {claimed && !playAnimationFor && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                    <span className="text-white text-xs">Claimed</span>
+                  </div>
+                )}
+                {playAnimationFor?.tokenId === nft.tokenId && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                    <h1 className="text-5xl text-black">
+                      {
+                        playAnimationFor.attributes.find(
+                          (a) => a.trait_type === "Animation"
+                        )?.value
+                      }
+                    </h1>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Mint Button Section */}
+      <div className="flex flex-col items-center space-y-4">
+        <button onClick={handleMint} disabled={isMinting} className="btn-sm">
+          {isMinting ? "Minting…" : "Mint"}
+        </button>
+        {mintHash && (
+          <a
+            href={`https://testnet.monadexplorer.com/tx/${mintHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-400 hover:underline"
+          >
+            Tx Hash: {mintHash.slice(0, 6)}…{mintHash.slice(-4)}
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
