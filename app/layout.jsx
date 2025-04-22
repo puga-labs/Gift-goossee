@@ -29,7 +29,7 @@ const inter = Inter({
 
 export default function RootLayout({ children }) {
   return (
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
         >

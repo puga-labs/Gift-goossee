@@ -4,6 +4,14 @@ const nextConfig = {
     viewTransition: true,
   },
   reactStrictMode: true,
+  // Отключение предупреждений о несоответствии гидратации
+  onDemandEntries: {
+    // Опциональная настройка
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+  // Подавление ошибок гидратации
+  suppressHydrationWarning: true,
   transpilePackages: ["detect-libc"],
   webpack: (config, { isServer }) => {
     config.externals.push("pino-pretty", "lokijs", "encoding", "detect-libc");
