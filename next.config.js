@@ -19,8 +19,12 @@ const nextConfig = {
         ...config.resolve.alias,
         "detect-libc": require.resolve("./mocks/detect-libc.js"),
       };
+      
+      // Защита от undefined
+      if (!config.resolve) config.resolve = {};
+      
+      // Полностью переопределяем fallback без использования ...config.resolve.fallback
       config.resolve.fallback = {
-        ...config.resolve.fallback,
         net: false,
         tls: false,
         fs: false,
@@ -31,7 +35,7 @@ const nextConfig = {
         zlib: false,
         path: false,
         os: false,
-        child_process: false,
+        child_process: false
       };
     }
     return config;
