@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react"
 
-const SelectedNftItem = ({ item, onClick, isMinting }) => (
+
+
+const SelectedNftItem = ({ item, onClick, isMinting }) => {
+  console.log(item)
+console.log(Number(item?.attributes?.find(attr => attr.trait_type === "Mint date")?.value))
+console.log(new Date().getTime()/1000)
+console.log(Number(item?.attributes?.find(attr => attr.trait_type === "Mint date")?.value) - Number(Math.floor(new Date().getTime()/1000)))
+
+return (
   <div className="rounded-lg bg-white w-[360px] h-[360px] shadow-main overflow-hidden relative border ">
     {item?.image ? (
       <img
@@ -17,7 +25,7 @@ const SelectedNftItem = ({ item, onClick, isMinting }) => (
     )}
     {item?.attributes?.some(
       (attr) => attr.trait_type === "Claimed" && attr.value === "false"
-    ) && (new Date(item?.attributes?.find(attr => attr.trait_type === "Mint Date")?.value) < new Date() ?
+    ) && (Number(item?.attributes?.find(attr => attr.trait_type === "Mint date")?.value) < Number(Math.floor(new Date().getTime()/1000)) ?
       <button
         className="absolute btn-sm bottom-4 left-1/2 -translate-x-1/2"
         onClick={onClick}
@@ -32,6 +40,7 @@ const SelectedNftItem = ({ item, onClick, isMinting }) => (
     ))}
   </div>
 )
+}
 
 const SelectedNftInfo = ({ item }) => {
   const formatValue = (trait_type, value) => {
@@ -43,6 +52,9 @@ const SelectedNftInfo = ({ item }) => {
     // Адрес
     if (value.startsWith("0x") && value.length === 42) {
       return `${value.slice(0, 6)}…${value.slice(-4)}`;
+    }
+    if (trait_type.toLowerCase().includes("amount")) {
+      return `${Math.floor(Number(value) / 1e14)/10000} MON`
     }
     // Очень длинный текст
     return value.length > 40 ? `${value.slice(0, 40)}…` : value;
@@ -57,6 +69,7 @@ const SelectedNftInfo = ({ item }) => {
         </p>
       </div>
       {item?.attributes?.map(({ trait_type, value }) => (
+        trait_type === "Commission Level" ? null :
         <div
           key={trait_type}
           className="p-2 rounded-lg border shadow-main bg-white"

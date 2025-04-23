@@ -20,7 +20,7 @@ const ListWrapper = ({ type, children, isLoading }) => {
           </div>
         </div>
       ) : hasItems ? (
-        <div className="grid grid-cols-3 gap-4 mt-4 overflow-y-auto h-[200px]">
+        <div className="grid grid-cols-3 gap-4 mt-4 overflow-y-auto h-[270px]">
           {children}
         </div>
       ) : (
@@ -75,18 +75,18 @@ export default function NftList({ nftList, setSelectedNft, isLoading }) {
   return (
     <div className="flex flex-col gap-4">
       <ListWrapper type="Unclaimed" isLoading={isLoading}>
-        {unclaimedNfts.map((item) => (
+        {unclaimedNfts.map((item, index) => (
           <NftItem
-            key={item.id}
+            key={item.id || `unclaimed-${index}`}
             item={item}
             onClick={() => setSelectedNft(item)}
           />
         ))}
       </ListWrapper>
       <ListWrapper type="Claimed" isLoading={isLoading}>
-        {claimedNfts.map((item) => (
+        {claimedNfts.map((item, index) => (
           <NftItem
-            key={item.id}
+            key={item.id || `claimed-${index}`}
             item={item}
             onClick={() => setSelectedNft(item)}
           />

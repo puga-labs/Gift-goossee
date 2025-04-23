@@ -90,7 +90,6 @@ contract GiftNFT is ERC721, Ownable, ReentrancyGuard {
 
         uint256 amount = gift.amount;
         gift.claimed = true;
-        gift.amount = 0;
 
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, "Transfer failed");
@@ -137,6 +136,7 @@ contract GiftNFT is ERC721, Ownable, ReentrancyGuard {
                 abi.encodePacked(
                     attributes, ', ',
                     '{ "trait_type": "Animation", "value": "', gift.animation, '" }, ',
+                    '{ "trait_type": "Amount", "value": "', _toString(gift.amount), '" },',
                     '{ "trait_type": "Commission Level", "value": "', _toString(gift.commissionLevel), '" }'
                 )
             );

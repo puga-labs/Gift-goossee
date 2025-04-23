@@ -1,17 +1,11 @@
-export const SMART_CONTRACT_ADDRESS = "0x287ff8ba364ef5ac6cdb8109d5218ca523ab702f";
+import { ethers } from 'ethers';
+export const SMART_CONTRACT_ADDRESS = "0xFaaE03372f7f263434f3B4649e496F45956E6b3f";
 export const MONAD_RPC_URL = 'https://testnet-rpc.monad.xyz';
 export const MONAD_CHAIN_ID = 0x279f;
 
-export const CONTRACT_ABI = {
-    "CHECK_ELIGIBILITY": {
-        "method": "0xdc5f560e",
-        "abi": [
-            "bool",
-            "string",
-            "uint256",
-            "uint256"
-          ]
-    },
-    "SEND_GIFT": "0x3edd1128",
-    "MINT_GIFT": "0x494cf979",
-}
+export const CONTRACT_ABI = new ethers.Interface([
+    "function tokenURI(uint256 tokenId) public view override returns (string memory)",
+    "function getUserNFTs(address user) external view returns (uint256[] memory)",
+    'function createGift(address receiver, string memory message, uint8 commissionLevel, string memory animation, uint256 timestamp, uint256 mintDate) external payable',
+    'function claimGift(uint256 tokenId) external'
+])

@@ -1,8 +1,6 @@
 import axios from 'axios'
-import { ethers } from 'ethers'
-import { MONAD_RPC_URL, SMART_CONTRACT_ADDRESS } from '../../../config'
+import { MONAD_RPC_URL, SMART_CONTRACT_ADDRESS, CONTRACT_ABI } from '../../../config'
 import { encodePacked, keccak256 } from "viem"
-const iface = new ethers.Interface(["function tokenURI(uint256 tokenId) public view override returns (string memory)","function getUserNFTs(address user) external view returns (uint256[] memory)"])
 
 /**
  * Декодирует данные NFT из формата data:application/json;base64
@@ -91,7 +89,7 @@ export async function getNftList (address:string) {
     }
 )
     if(response.data?.result) {
-        const decode = await iface.decodeFunctionResult('getUserNFTs', response.data.result)
+        const decode = await CONTRACT_ABI.decodeFunctionResult('getUserNFTs', response.data.result)
         const nftList = decode.map((item: bigint) => item.toString());
         return nftList[0].split(',')
     }
@@ -122,7 +120,7 @@ export async function getNftData (tokenId:string) {
     if(response.data?.result) {
         console.log(response.data)
         const data = response.data.result
-        const decode = await iface.decodeFunctionResult('tokenURI', data)
+        const decode = await CONTRACT_ABI.decodeFunctionResult('tokenURI', data)
         console.log(decode)
         const tokenURI = decode[0]
         return decodeNftData(tokenURI)
