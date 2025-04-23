@@ -1,5 +1,5 @@
-import  {ethers} from 'ethers';
 import {generateTokenId} from './calls'
+import {CONTRACT_ABI} from '../../../config'
 /**
  * Создает данные для вызова функции createGift смарт-контракта
  * @param {string} receiverAddress - Адрес получателя подарка
@@ -32,13 +32,8 @@ export function createSendData(
         default:
             commissionLevel = 0;
     }
-    // Определяем ABI интерфейс для функции createGift
-    const iface = new ethers.Interface([
-        'function createGift(address receiver, string memory message, uint8 commissionLevel, string memory animation, uint256 timestamp, uint256 mintDate) external payable'
-    ]);
-    
     // Кодируем вызов функции с параметрами
-    const data = iface.encodeFunctionData('createGift', [
+    const data = CONTRACT_ABI.encodeFunctionData('createGift', [
         receiverAddress,
         giftMessage,
         commissionLevel,
@@ -60,13 +55,8 @@ export function createSendData(
  */
 
 export function createClaimData(tokenId: number | string) {
-    // Определяем ABI интерфейс для функции claimGift
-    const iface = new ethers.Interface([
-        'function claimGift(uint256 tokenId) external'
-    ]);
-    
-    // Кодируем вызов функции с параметром
-    const data = iface.encodeFunctionData('claimGift', [tokenId]);
+
+    const data = CONTRACT_ABI.encodeFunctionData('claimGift', [tokenId]);
     
     return data
       
