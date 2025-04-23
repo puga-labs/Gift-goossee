@@ -24,13 +24,13 @@ export async function generateGiftImage(imageOptions, decorations = [], image_id
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Ошибка API:', error);
+      console.error('API error:', error);
       throw new Error(error.error || 'Ошибка при генерации изображения');
     }
 
     return true;
   } catch (error) {
-    console.error('Ошибка при запросе к API генерации изображения:', error);
+    console.error('Error generating gift image:', error);
     throw error;
   }
 }
@@ -60,7 +60,7 @@ export async function getImagePreview(element) {
     // Возвращаем data URL с низким качеством
     return canvas.toDataURL('image/jpeg', 0.5);
   } catch (error) {
-    console.error('Ошибка при создании превью изображения:', error);
+    console.error('Error generating image preview:', error);
     return null;
   }
 } 

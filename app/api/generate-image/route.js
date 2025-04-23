@@ -16,7 +16,7 @@ export async function POST(request) {
     if (!imageOptions) {
       return NextResponse.json({ 
         success: false, 
-        error: "Не указаны параметры изображения" 
+        error: "Image parameters are not specified" 
       }, { status: 400 });
     }
     
@@ -55,7 +55,7 @@ export async function POST(request) {
       url: result.link 
     });
   } catch (error) {
-    console.error('Ошибка при генерации изображения:', error);
+    console.error('Error generating image:', error);
     return NextResponse.json({ 
       success: false, 
       error: error.message 

@@ -66,7 +66,7 @@ export function SendForm({
       })
 
       // Генерируем изображение через API на сервере
-      console.log("Запрос на генерацию изображения...")
+      console.log("Request to generate image...")
       await generateGiftImage(
         imageOptions,
         decorations,

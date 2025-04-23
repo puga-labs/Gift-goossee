@@ -8,7 +8,7 @@ export async function getLeaderboard(type = 'sent' as actionType) {
     .select()
     .order(type, { ascending: false })
   if (error) {
-    console.error('Ошибка загрузки лидеров:', error);
+    console.error('Error loading leaderboard:', error);
     return [];
   }
   
@@ -23,13 +23,13 @@ export async function updateLeaderboard(address: string, action: actionType) {
             column_name: action
         })
         if (error) {
-            console.error('Ошибка обновления лидеров:', error);
+            console.error('Error updating leaderboard:', error);
             return false;
         }
-        console.log('Лидеры обновлены:', data);
+        console.log('Leaderboard updated:', data);
         return true;
     } catch (error) {
-        console.error('Ошибка обновления лидеров:', error);
+        console.error('Error updating leaderboard:', error);
         return false;
     }
 }

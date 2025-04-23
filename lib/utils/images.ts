@@ -9,7 +9,7 @@ export async function getStickers() {
 
   console.log(data);
   if (error) {
-    console.error('Ошибка загрузки стикеров:', error);
+    console.error('Error loading stickers:', error);
     return [];
   }
   
