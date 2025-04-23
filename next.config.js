@@ -10,39 +10,45 @@ const nextConfig = {
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
-  // Подавление ошибок гидратации
-  suppressHydrationWarning: true,
+  // Опция suppressHydrationWarning должна использоваться в React компонентах, а не в next.config.js
+  // suppressHydrationWarning: true,
   transpilePackages: ["detect-libc"],
   webpack: (config, { isServer }) => {
-    config.externals.push("pino-pretty", "lokijs", "encoding", "detect-libc");
+    // Добавляем внешние зависимости
+    config.externals = [...(config.externals || []), "pino-pretty", "lokijs", "encoding", "detect-libc"];
+    
+    // Настройки только для клиентской сборки
     if (!isServer) {
-      // Используем наш mock-файл для detect-libc на клиенте
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        "detect-libc": require.resolve("./mocks/detect-libc.js"),
-      };
+      // Mock для detect-libc
+      if (!config.resolve) config.resolve = {};
+      if (!config.resolve.alias) config.resolve.alias = {};
+      
+      config.resolve.alias["detect-libc"] = require.resolve("./mocks/detect-libc.js");
+      
+      // Правильная настройка fallback (бэкпорт для модулей Node.js)
       config.resolve.fallback = {
-        ...config.resolve.fallback,
-        net: {},
-        tls: {},
-        fs: {},
-        http: {},
-        https: {},
-        stream: {},
-        crypto: {},
-        zlib: {},
-        path: {},
-        os: {},
-        child_process: {},
+        // Отключаем эти модули Node.js на клиенте
+        net: false,
+        tls: false,
+        fs: false,
+        http: false,
+        https: false,
+        stream: false,
+        crypto: false,
+        zlib: false,
+        path: false,
+        os: false,
+        child_process: false
       };
     }
+    
     return config;
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "magenta-patient-skink-342.mypinata.cloud",
+        hostname: "magenta-patient-skink-342.mypinata.cloud", 
         port: "",
         pathname: "/ipfs/**",
       },
@@ -53,8 +59,7 @@ const nextConfig = {
     return [
       {
         source: "/ipfs/:hash*",
-        destination:
-          "https://magenta-patient-skink-342.mypinata.cloud/ipfs/:hash*",
+        destination: "https://magenta-patient-skink-342.mypinata.cloud/ipfs/:hash*",
       },
     ];
   },
@@ -70,8 +75,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Headers",
-            value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+            value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
           },
         ],
       },

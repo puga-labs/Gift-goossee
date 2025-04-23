@@ -43,7 +43,7 @@ message:string
     console.log('Создание базового изображения фона...');
     
     // 1. Сначала создаем базовое изображение только с фоном
-    const baseImage = await sharp(`public/GIFT_IMAGES/BACKGROUND/${options.background}.png`)
+    const baseImage = await sharp(`https://giftgoosseemvp.vercel.app/GIFT_IMAGES/BACKGROUND/${options.background}.png`)
       .resize(outputWidth, outputHeight, { fit: 'cover' })
       .toBuffer();
     
@@ -60,7 +60,7 @@ message:string
       const giftTop = Math.round((outputHeight - giftHeight) / 2);
       const giftLeft = Math.round((outputWidth - giftWidth) / 2);
       
-      const giftBuffer = await sharp(`public/GIFT_IMAGES/GIFT/${options.gift}.png`)
+      const giftBuffer = await sharp(`https://giftgoosseemvp.vercel.app/GIFT_IMAGES/GIFT/${options.gift}.png`)
         .resize(giftWidth, giftHeight, {
           fit: 'contain',
           background: { r: 0, g: 0, b: 0, alpha: 0 }
