@@ -10,8 +10,6 @@ const nextConfig = {
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
-  // Подавление ошибок гидратации
-  suppressHydrationWarning: true,
   transpilePackages: ["detect-libc"],
   webpack: (config, { isServer }) => {
     config.externals.push("pino-pretty", "lokijs", "encoding", "detect-libc");
@@ -21,19 +19,23 @@ const nextConfig = {
         ...config.resolve.alias,
         "detect-libc": require.resolve("./mocks/detect-libc.js"),
       };
+      
+      // Защита от undefined
+      if (!config.resolve) config.resolve = {};
+      
+      // Полностью переопределяем fallback без использования ...config.resolve.fallback
       config.resolve.fallback = {
-        ...config.resolve.fallback,
-        net: {},
-        tls: {},
-        fs: {},
-        http: {},
-        https: {},
-        stream: {},
-        crypto: {},
-        zlib: {},
-        path: {},
-        os: {},
-        child_process: {},
+        net: false,
+        tls: false,
+        fs: false,
+        http: false,
+        https: false,
+        stream: false,
+        crypto: false,
+        zlib: false,
+        path: false,
+        os: false,
+        child_process: false
       };
     }
     return config;
