@@ -41,9 +41,17 @@ message:string
     const outputHeight = 500;
     
     console.log('Создание базового изображения фона...');
-    
+    const backgroundUrl = `https://goossegiftmvp.vercel.app/GIFT_IMAGES/BACKGROUND/${options.background}.png`
+    const backgroundPromise = axios.get(backgroundUrl, { responseType: 'arraybuffer' })
+    const giftUrl = `https://goossegiftmvp.vercel.app/GIFT_IMAGES/GIFT/${options.gift}.png`
+    const giftPromise = axios.get(giftUrl, { responseType: 'arraybuffer' })
+    const [backgroundBuffer, giftBuffer] = await Promise.all([backgroundPromise, giftPromise]).then(([backgroundResponse, giftResponse]) => {
+      return [Buffer.from(backgroundResponse.data, 'binary'), Buffer.from(giftResponse.data, 'binary')]
+    })
+
     // 1. Сначала создаем базовое изображение только с фоном
-    const baseImage = await sharp(`https://giftgoosseemvp.vercel.app/GIFT_IMAGES/BACKGROUND/${options.background}.png`)
+
+    const baseImage = await sharp(backgroundBuffer)
       .resize(outputWidth, outputHeight, { fit: 'cover' })
       .toBuffer();
     
@@ -59,8 +67,7 @@ message:string
       const giftHeight = Math.round(outputHeight * 0.8);
       const giftTop = Math.round((outputHeight - giftHeight) / 2);
       const giftLeft = Math.round((outputWidth - giftWidth) / 2);
-      
-      const giftBuffer = await sharp(`https://giftgoosseemvp.vercel.app/GIFT_IMAGES/GIFT/${options.gift}.png`)
+      const giftLayer = await sharp(giftBuffer)
         .resize(giftWidth, giftHeight, {
           fit: 'contain',
           background: { r: 0, g: 0, b: 0, alpha: 0 }
@@ -68,7 +75,7 @@ message:string
         .toBuffer();
       
       compositeLayers.push({
-        input: giftBuffer,
+        input: giftLayer,
         top: giftTop,
         left: giftLeft
       });
