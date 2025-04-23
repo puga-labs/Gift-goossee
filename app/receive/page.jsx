@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useState, useEffect, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useAccount, useSendTransaction } from "wagmi"
-import { ethers } from "ethers"
 import { rpcConfig } from "../../wagmi"
 import { SMART_CONTRACT_ADDRESS } from "../../config"
 import { getNftList, getNftData } from "../../utils/back/chain/calls"
